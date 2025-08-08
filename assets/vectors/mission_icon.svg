@@ -1,6 +1,8 @@
-<svg width="98" height="48" viewBox="0 0 98 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M31 24L49 6L67 24L49 42L31 24Z" stroke="#3D4879"/>
-<path d="M29 24L49 4L69 24L49 44L29 24Z" stroke="#3D4879" stroke-width="0.5"/>
-<rect x="47" y="12" width="4" height="18" fill="#3D4879"/>
-<rect x="47" y="34" width="4" height="4" fill="#3D4879"/>
+<svg width="80" height="49" viewBox="0 0 80 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Mission Icon">
+<g id="All">
+<path id="Border" d="M60.352 24.4985L39.9985 44.8521L19.645 24.4985L39.9985 4.14502L60.352 24.4985ZM20.352 24.4985L39.9985 44.145L59.645 24.4985L39.9985 4.85205L20.352 24.4985ZM58.7055 24.4985L39.9985 43.2056L21.2915 24.4985L39.9985 5.7915L58.7055 24.4985ZM22.7055 24.4985L39.9985 41.7915L57.2915 24.4985L39.9985 7.20557L22.7055 24.4985Z" fill="#3D4879"/>
+<path id="Exclamation" d="M41.9985 36.4985H37.9985V32.4985H41.9985V36.4985ZM41.9985 30.4985H37.9985V13.4985H41.9985V30.4985Z" fill="#3D4879"/>
+</g>
+</g>
 </svg>

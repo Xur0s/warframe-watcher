@@ -1,31 +1,32 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import TabBar from "@/components/TabBar";
+import MissionTabBar from "@/components/MissionTabBar";
+import FissureTabBar from "@/components/FissureTabBar";
 
 const _layout = () => {
   return (
     <Tabs
-      tabBar={(props) => <TabBar {...props} />}
+      tabBar={(props) => <FissureTabBar {...props} />}
       screenOptions={{ tabBarShowLabel: false }}
     >
       <Tabs.Screen
-        name="(missions)"
+        name="normal"
         options={{
-          title: "Missions",
+          title: "Normal",
           headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="add"
+        name="steelPath"
         options={{
-          title: "Watcher",
+          title: "Steel_Path",
           headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="voidStorm"
         options={{
-          title: "Settings",
+          title: "Void_Storm",
           headerShown: false,
         }}
       />

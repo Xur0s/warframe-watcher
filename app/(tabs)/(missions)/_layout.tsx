@@ -1,31 +1,31 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import TabBar from "@/components/TabBar";
+import MissionTabBar from "@/components/MissionTabBar";
 
 const _layout = () => {
   return (
     <Tabs
-      tabBar={(props) => <TabBar {...props} />}
+      tabBar={(props) => <MissionTabBar {...props} />}
       screenOptions={{ tabBarShowLabel: false }}
     >
       <Tabs.Screen
-        name="(missions)"
+        name="(fissures)"
         options={{
-          title: "Missions",
+          title: "Fissures",
           headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="add"
+        name="invasions"
         options={{
-          title: "Watcher",
+          title: "Invasions",
           headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="timer"
         options={{
-          title: "Settings",
+          title: "Timer",
           headerShown: false,
         }}
       />
