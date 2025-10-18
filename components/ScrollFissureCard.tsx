@@ -2,28 +2,29 @@ import { View, Text, ScrollView } from "react-native";
 import React from "react";
 import FissureCard from "./FissureCard";
 
-const cardData = [
-  { id: 1 },
-  { id: 2 },
-  { id: 3 },
-  { id: 4 },
-  { id: 5 },
-  { id: 6 },
-  { id: 7 },
-  { id: 8 },
-  { id: 9 },
-  { id: 10 },
-];
+interface Fissure {
+  id: string;
+  activation: string;
+  expiry: string;
+  planet: string;
+  node: string;
+  enemy_faction: string;
+  mission_type: string;
+  tier: string;
+  expired: boolean;
+  isStorm: boolean;
+  isHard: boolean;
+}
 
-const ScrollFissureCard = () => {
+const ScrollFissureCard = ({ cardData }: { cardData: Fissure[] }) => {
   return (
     <ScrollView
       className=""
       contentContainerClassName="gap-3"
       showsHorizontalScrollIndicator={false}
     >
-      {cardData.map((card) => (
-        <FissureCard key={card.id} />
+      {cardData.map((data) => (
+        <FissureCard key={data.id} />
       ))}
     </ScrollView>
   );

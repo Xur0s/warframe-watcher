@@ -1,10 +1,42 @@
-import { View, Image, useWindowDimensions } from "react-native";
-import React from "react";
+import { View, Image, useWindowDimensions, RefreshControl } from "react-native";
+import React, { useEffect, useState } from "react";
 import { images } from "@/constants/images";
 import ScreenGradient from "@/components/ScreenGradient";
 import ScrollFissureCard from "@/components/ScrollFissureCard";
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
 const normal = () => {
+  const [fissures, setFissures] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/fissures`);
+      const data = await res.json();
+      if (data) {
+        setFissures(data);
+      }
+    } catch (err) {
+      console.error("Failed to get timers from API");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const refreshInterval = setInterval(fetchData, 10000);
+    return () => clearInterval(refreshInterval);
+  }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
+
   return (
     <>
       <View className="flex-1">
@@ -23,7 +55,7 @@ const normal = () => {
         </View>
 
         <View className="pt-[160] pb-[130]">
-          <ScrollFissureCard />
+          {loading ? <></> : <ScrollFissureCard cardData={fissures} />}
         </View>
       </View>
     </>

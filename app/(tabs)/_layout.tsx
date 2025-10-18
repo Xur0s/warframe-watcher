@@ -1,11 +1,12 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import type { BottomTabsProps } from "react-native-screens";
 import TabBar from "@/components/TabBar";
 
 const _layout = () => {
   return (
     <Tabs
-      tabBar={(props) => <TabBar {...props} />}
+      tabBar={(props: BottomTabsProps) => <TabBar {...props} />}
       screenOptions={{ tabBarShowLabel: false }}
     >
       <Tabs.Screen
