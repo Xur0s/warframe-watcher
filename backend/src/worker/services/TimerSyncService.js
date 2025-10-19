@@ -1,4 +1,5 @@
 import axios from "axios";
+import worldstateData from "warframe-worldstate-data";
 import TimerWorkerModel from "../models/workerModel.js";
 import { redisClient } from "../db/redis.js";
 import RedisServices from "./RedisService.js";
@@ -12,26 +13,43 @@ class createTimer {
 
   async getTimers() {
     try {
-      const response = await axios.get(
-        "https://api.warframestat.us/pc/fissures"
+      const response = await fetch(
+        "https://api.warframe.com/cdn/worldState.php"
       );
-      const timerData = response.data.map((timer) => {
-        const [nodePart, planetPart] = timer.node.split(" (");
-        const node = nodePart ? nodePart : null;
+      const worldState = await response.json();
+
+      const timerData = worldState.ActiveMissions.map((mission) => {
+        const id = mission._id.$oid;
+        const node = worldstateData.solNodes[mission.Node].value;
+        const enemy = worldstateData.solNodes[mission.Node].enemy;
+        const type =
+          mission.MissionType == "MT_CORRUPTION"
+            ? "Void Flood"
+            : worldstateData.missionTypes[mission.MissionType].value;
+        const tier = worldstateData.fissureModifiers[mission.Modifier].value;
+        const activation = new Date(
+          parseInt(mission.Activation.$date.$numberLong)
+        );
+        const expiry = new Date(parseInt(mission.Expiry.$date.$numberLong));
+        const isHard = mission.Hard ? mission.Hard : false;
+
+        const [nodePart, planetPart] = node.split(" (");
+        const planetNode = nodePart ? nodePart : null;
         const planet = planetPart ? planetPart.replace(")", "") : null;
-        const isExpired = new Date() > timer.expiry;
+        const isExpired = new Date() > expiry;
+
         return {
-          id: timer.id,
-          activation: timer.activation,
-          expiry: timer.expiry,
+          id: id,
+          activation: activation,
+          expiry: expiry,
           planet: planet,
-          node: node,
-          enemy_faction: timer.enemy,
-          mission_type: timer.missionType,
-          tier: timer.tier,
+          node: planetNode,
+          enemy_faction: enemy,
+          mission_type: type,
+          tier: tier,
           expired: isExpired,
-          isStorm: timer.isStorm,
-          isHard: timer.isHard,
+          isStorm: false,
+          isHard: isHard,
         };
       });
 

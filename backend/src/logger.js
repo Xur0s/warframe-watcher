@@ -8,10 +8,6 @@ const __dirname = dirname(__filename);
 const transport = pino.transport({
   targets: [
     {
-      target: "pino/file",
-      options: { destination: `${__dirname}/../../logs/app.log` },
-    },
-    {
       target: "pino-pretty",
       options: { colorize: true },
     },
