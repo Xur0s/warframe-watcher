@@ -1,11 +1,12 @@
-import React from "react";
-import { Tabs } from "expo-router";
 import FissureTabBar from "@/components/FissureTabBar";
+import { Tabs } from "expo-router";
+import React from "react";
 import { BottomTabsProps } from "react-native-screens";
 
 const _layout = () => {
   return (
     <Tabs
+      initialRouteName="normal"
       tabBar={(props: BottomTabsProps) => <FissureTabBar {...props} />}
       screenOptions={{ tabBarShowLabel: false }}
     >

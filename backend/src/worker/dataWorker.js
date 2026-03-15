@@ -1,14 +1,29 @@
-import TimerSyncService from "./services/TimerSyncService.js";
+import initRedis from "#redisInit";
+import startJobListener from "#redisSubscriber";
 import logger from "../logger.js";
-import RedisService from "./services/RedisService.js";
-
-const timerSyncService = new TimerSyncService();
-const redisService = new RedisService();
+import TimerSyncService from "./services/TimerSyncService.js";
 
 let isRefreshingExpiry = true;
 let expiryTimeoutId = null;
 
-async function scheduleNextExpiryRefresh() {
+async function main() {
+  try {
+    await initRedis("WORKER");
+    await startJobListener();
+
+    const timerSyncService = new TimerSyncService();
+
+    await timerSyncService.getTimers();
+    await timerSyncService.expireTimers();
+
+    await handleTimers(timerSyncService);
+  } catch (error) {
+    logger.error("Failed to start worker:", error);
+    process.exit(1);
+  }
+}
+
+async function scheduleNextExpiryRefresh(timerSyncService) {
   if (!isRefreshingExpiry) return;
 
   let getEarliestExpiry = await timerSyncService.getEarliestExpireTime();
@@ -34,24 +49,27 @@ async function scheduleNextExpiryRefresh() {
 
   expiryTimeoutId = setTimeout(async () => {
     await timerSyncService.expireTimers();
-    scheduleNextExpiryRefresh();
+    scheduleNextExpiryRefresh(timerSyncService);
   }, msUntilRefresh);
 }
 
-await timerSyncService.getTimers();
-await timerSyncService.expireTimers();
-await redisService.startJobListener();
+async function handleTimers(timerSyncService) {
+  const updateTimeoutId = setInterval(async () => {
+    await timerSyncService.getTimers();
+  }, 300000); //Every 5 mins
 
-const updateTimeoutId = setInterval(async () => {
-  await timerSyncService.getTimers();
-}, 60000); //Every 60 seconds
+  scheduleNextExpiryRefresh(timerSyncService);
 
-scheduleNextExpiryRefresh();
+  process.on("SIGINT", () => {
+    logger.info("Shutting off worker");
+    isRefreshingExpiry = false;
+    clearInterval(updateTimeoutId);
+    clearInterval(expiryTimeoutId);
+    process.exit(0);
+  });
+}
 
-process.on("SIGINT", () => {
-  logger.info("Shutting off worker");
-  isRefreshingExpiry = false;
-  clearInterval(updateTimeoutId);
-  clearInterval(expiryTimeoutId);
-  process.exit(0);
+main().catch((error) => {
+  logger.error("Unhandled error in main:", error);
+  process.exit(1);
 });

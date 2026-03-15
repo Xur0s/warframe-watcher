@@ -9,10 +9,19 @@
     "express": "^5.1.0",
     "pg": "^8.16.3",
     "pino": "^9.11.0",
-    "redis": "^5.8.2",
+    "redis": "^5.9.0",
     "warframe-worldstate-data": "^3.1.7"
   },
   "devDependencies": {
     "pino-pretty": "^13.1.1"
+  },
+  "imports": {
+    "#redis": "./src/redis/index.js",
+    "#redisInit": "./src/redis/initRedis.js",
+    "#redisSubscriber": "./src/redis/jobListener.js"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "start:worker": "node src/worker/dataWorker.js"
   }
 }

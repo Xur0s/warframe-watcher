@@ -1,9 +1,7 @@
-import axios from "axios";
+import { redisClient } from "#redis";
 import worldstateData from "warframe-worldstate-data";
-import TimerWorkerModel from "../models/workerModel.js";
-import { redisClient } from "../db/redis.js";
-import RedisServices from "./RedisService.js";
 import logger from "../../logger.js";
+import TimerWorkerModel from "../models/workerModel.js";
 
 class createTimer {
   constructor() {
@@ -18,40 +16,73 @@ class createTimer {
       );
       const worldState = await response.json();
 
-      const timerData = worldState.ActiveMissions.map((mission) => {
-        const id = mission._id.$oid;
-        const node = worldstateData.solNodes[mission.Node].value;
-        const enemy = worldstateData.solNodes[mission.Node].enemy;
-        const type =
-          mission.MissionType == "MT_CORRUPTION"
-            ? "Void Flood"
-            : worldstateData.missionTypes[mission.MissionType].value;
-        const tier = worldstateData.fissureModifiers[mission.Modifier].value;
-        const activation = new Date(
-          parseInt(mission.Activation.$date.$numberLong)
-        );
-        const expiry = new Date(parseInt(mission.Expiry.$date.$numberLong));
-        const isHard = mission.Hard ? mission.Hard : false;
+      const timerData = [
+        ...worldState.ActiveMissions.map((mission) => {
+          const id = mission._id.$oid;
+          const node = worldstateData.solNodes[mission.Node].value;
+          const enemy = worldstateData.solNodes[mission.Node].enemy;
+          const type =
+            mission.MissionType == "MT_CORRUPTION"
+              ? "Void Flood"
+              : worldstateData.missionTypes[mission.MissionType].value;
+          const tier = worldstateData.fissureModifiers[mission.Modifier].value;
+          const activation = new Date(
+            parseInt(mission.Activation.$date.$numberLong)
+          );
+          const expiry = new Date(parseInt(mission.Expiry.$date.$numberLong));
+          const is_hard = mission.Hard ? mission.Hard : false;
 
-        const [nodePart, planetPart] = node.split(" (");
-        const planetNode = nodePart ? nodePart : null;
-        const planet = planetPart ? planetPart.replace(")", "") : null;
-        const isExpired = new Date() > expiry;
+          const [nodePart, planetPart] = node.split(" (");
+          const planetNode = nodePart ? nodePart : null;
+          const planet = planetPart ? planetPart.replace(")", "") : null;
+          const isExpired = new Date() > expiry;
 
-        return {
-          id: id,
-          activation: activation,
-          expiry: expiry,
-          planet: planet,
-          node: planetNode,
-          enemy_faction: enemy,
-          mission_type: type,
-          tier: tier,
-          expired: isExpired,
-          isStorm: false,
-          isHard: isHard,
-        };
-      });
+          return {
+            id: id,
+            activation: activation,
+            expiry: expiry,
+            planet: planet,
+            node: planetNode,
+            enemy_faction: enemy,
+            mission_type: type,
+            tier: tier,
+            expired: isExpired,
+            is_storm: false,
+            is_hard: is_hard,
+          };
+        }),
+
+        ...worldState.VoidStorms.map((mission) => {
+          const id = mission._id.$oid;
+          const node = worldstateData.solNodes[mission.Node].value;
+          const enemy = worldstateData.solNodes[mission.Node].enemy;
+          const type = worldstateData.solNodes[mission.Node].type;
+          const tier =
+            worldstateData.fissureModifiers[mission.ActiveMissionTier].value;
+          const activation = new Date(
+            parseInt(mission.Activation.$date.$numberLong)
+          );
+          const expiry = new Date(parseInt(mission.Expiry.$date.$numberLong));
+          const [nodePart, planetPart] = node.split(" (");
+          const planetNode = nodePart ? nodePart : null;
+          const planet = planetPart ? planetPart.replace(")", "") : null;
+          const isExpired = new Date() > expiry;
+
+          return {
+            id: id,
+            activation: activation,
+            expiry: expiry,
+            planet: planet,
+            node: planetNode,
+            enemy_faction: enemy,
+            mission_type: type,
+            tier: tier,
+            expired: isExpired,
+            is_storm: true,
+            is_hard: false,
+          };
+        }),
+      ];
 
       let timersInserted = 0;
       for (const timer of timerData) {
@@ -60,7 +91,6 @@ class createTimer {
         const secondsTTL = Math.ceil(msTTL / 1000);
 
         if (msTTL <= 0) continue;
-        if (timer.isHard || timer.isStorm) continue;
 
         // Postgres
         const insertTimer = await TimerWorkerModel.insert(timer);
@@ -78,7 +108,6 @@ class createTimer {
         });
         await multi.exec();
       }
-
       this.lastSyncDate = new Date();
       this.syncCount++;
 

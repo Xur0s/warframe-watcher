@@ -1,0 +1,36 @@
+services:
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER_WORKER: worker
+      DB_PASSWORD_WORKER: ${DB_PASSWORD_WORKER}
+      DB_DATABASE: ${DB_DATABASE}
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER_API: api
+      DB_PASSWORD_API: ${DB_PASSWORD_API}
+      DB_DATABASE: ${DB_DATABASE}
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started

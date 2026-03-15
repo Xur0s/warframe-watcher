@@ -1,0 +1,9 @@
+<svg width="500" height="120" viewBox="0 0 500 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="500" height="120" fill="#1E1E1E"/>
+<g id="Option Box">
+<path id="BackBox" d="M449.9 20.0996V99.9004H50.0996V20.0996H449.9Z" fill="black" stroke="#A2AECB" stroke-width="0.2"/>
+<rect id="RightFrame" x="46" y="20" width="8" height="80" fill="#A2AECB"/>
+<rect id="LeftFrame" x="446" y="20" width="8" height="80" fill="#A2AECB"/>
+<text id="OptionName" fill="#A2AECB" style="white-space: pre" xml:space="preserve" font-family="Roboto Mono" font-size="24.463" font-weight="bold" letter-spacing="0.2em"><tspan x="213.657" y="69.5021">LITH</tspan></text>
+</g>
+</svg>

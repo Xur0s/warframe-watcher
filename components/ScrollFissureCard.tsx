@@ -1,6 +1,6 @@
-import { View, Text, ScrollView } from "react-native";
 import React from "react";
-import FissureCard from "./FissureCard";
+import { ScrollView } from "react-native";
+import FissureCard from "./FissureCard2";
 
 interface Fissure {
   id: string;
@@ -17,14 +17,47 @@ interface Fissure {
 }
 
 const ScrollFissureCard = ({ cardData }: { cardData: Fissure[] }) => {
+  const lithFissures = cardData.filter(
+    (fissure) => fissure?.tier.toLowerCase() === "lith"
+  );
+  const mesoFissures = cardData.filter(
+    (fissure) => fissure?.tier.toLowerCase() === "meso"
+  );
+  const neoFissures = cardData.filter(
+    (fissure) => fissure?.tier.toLowerCase() === "neo"
+  );
+  const axiFissures = cardData.filter(
+    (fissure) => fissure?.tier.toLowerCase() === "axi"
+  );
+  const omniaFissures = cardData.filter(
+    (fissure) => fissure?.tier.toLowerCase() === "omnia"
+  );
+  const requiemFissures = cardData.filter(
+    (fissure) => fissure?.tier.toLowerCase() === "requiem"
+  );
   return (
     <ScrollView
       className=""
       contentContainerClassName="gap-3"
       showsHorizontalScrollIndicator={false}
     >
-      {cardData.map((data) => (
-        <FissureCard key={data.id} />
+      {omniaFissures.map((data) => (
+        <FissureCard key={data.id} data={data} />
+      ))}
+      {lithFissures.map((data) => (
+        <FissureCard key={data.id} data={data} />
+      ))}
+      {mesoFissures.map((data) => (
+        <FissureCard key={data.id} data={data} />
+      ))}
+      {neoFissures.map((data) => (
+        <FissureCard key={data.id} data={data} />
+      ))}
+      {axiFissures.map((data) => (
+        <FissureCard key={data.id} data={data} />
+      ))}
+      {requiemFissures.map((data) => (
+        <FissureCard key={data.id} data={data} />
       ))}
     </ScrollView>
   );

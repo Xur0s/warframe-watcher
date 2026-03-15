@@ -1,7 +1,8 @@
-import { View, Image } from "react-native";
-import React from "react";
-import { images } from "@/constants/images";
+import AddButton from "@/components/AddButton2";
 import ScreenGradient from "@/components/ScreenGradient";
+import { images } from "@/constants/images";
+import React from "react";
+import { Image, Text, View } from "react-native";
 
 const add = () => {
   return (
@@ -17,6 +18,15 @@ const add = () => {
       </View>
       <View className="absolute bottom-0">
         <ScreenGradient direction="bottom" />
+      </View>
+
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-[#A2AECB] absolute top-32 left-4 text-[2.8rem] font-roboto-condensed">
+          NOW WATCHING:
+        </Text>
+        <View className="absolute bottom-40 rounded">
+          <AddButton />
+        </View>
       </View>
     </View>
   );

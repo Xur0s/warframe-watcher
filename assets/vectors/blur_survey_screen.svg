@@ -1,0 +1,19 @@
+<svg width="412" height="917" viewBox="0 0 412 917" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Hover Survey Screen">
+<rect id="OuterBox" x="9" y="49" width="394" height="794" stroke="#A2AECB" stroke-width="2"/>
+<g id="BottomFrame">
+<path d="M186 855H226H286C286.597 853.208 288.274 852 290.162 852H304.5C305.328 852 306 852.672 306 853.5C306 854.328 305.328 855 304.5 855H286H226C226 857.485 223.985 859.5 221.5 859.5H190.5C188.015 859.5 186 857.485 186 855H126H107.5C106.672 855 106 854.328 106 853.5C106 852.672 106.672 852 107.5 852H121.838C123.726 852 125.403 853.208 126 855H186Z" fill="#A2AECB"/>
+<path d="M186 855H226M186 855H126M186 855C186 857.485 188.015 859.5 190.5 859.5H221.5C223.985 859.5 226 857.485 226 855M226 855H286M126 855H107.5C106.672 855 106 854.328 106 853.5C106 852.672 106.672 852 107.5 852H121.838C123.726 852 125.403 853.208 126 855ZM286 855H304.5C305.328 855 306 854.328 306 853.5C306 852.672 305.328 852 304.5 852H290.162C288.274 852 286.597 853.208 286 855Z" stroke="#A2AECB"/>
+</g>
+<g id="TopFrame">
+<path d="M186 37H226H286C286.597 38.7916 288.274 40 290.162 40H304.5C305.328 40 306 39.3284 306 38.5C306 37.6716 305.328 37 304.5 37H286H226C226 34.5147 223.985 32.5 221.5 32.5H190.5C188.015 32.5 186 34.5147 186 37H126H107.5C106.672 37 106 37.6716 106 38.5C106 39.3284 106.672 40 107.5 40H121.838C123.726 40 125.403 38.7916 126 37H186Z" fill="#A2AECB"/>
+<path d="M186 37H226M186 37H126M186 37C186 34.5147 188.015 32.5 190.5 32.5H221.5C223.985 32.5 226 34.5147 226 37M226 37H286M126 37H107.5C106.672 37 106 37.6716 106 38.5C106 39.3284 106.672 40 107.5 40H121.838C123.726 40 125.403 38.7916 126 37ZM286 37H304.5C305.328 37 306 37.6716 306 38.5C306 39.3284 305.328 40 304.5 40H290.162C288.274 40 286.597 38.7916 286 37Z" stroke="#A2AECB"/>
+</g>
+<foreignObject x="14" y="54" width="384" height="784"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(2px);clip-path:url(#bgblur_0_382_16_clip_path);height:100%;width:100%"></div></foreignObject><rect id="BlurBox" data-figma-bg-blur-radius="4" x="18" y="58" width="376" height="776" fill="#010411" fill-opacity="0.5"/>
+<text id="Subtitle" fill="#A2AECB" style="white-space: pre" xml:space="preserve" font-family="Roboto Condensed" font-size="14" font-weight="300" letter-spacing="0em"><tspan x="185.383" y="119.785">Subtitle</tspan></text>
+<text id="Question" fill="#A2AECB" style="white-space: pre" xml:space="preserve" font-family="Roboto" font-size="40" font-weight="200" letter-spacing="0em"><tspan x="128.676" y="105.172">Question</tspan></text>
+</g>
+<defs>
+<clipPath id="bgblur_0_382_16_clip_path" transform="translate(-14 -54)"><rect x="18" y="58" width="376" height="776"/>
+</clipPath></defs>
+</svg>

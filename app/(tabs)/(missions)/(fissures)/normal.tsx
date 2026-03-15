@@ -1,19 +1,33 @@
-import { View, Image, useWindowDimensions, RefreshControl } from "react-native";
-import React, { useEffect, useState } from "react";
-import { images } from "@/constants/images";
 import ScreenGradient from "@/components/ScreenGradient";
 import ScrollFissureCard from "@/components/ScrollFissureCard";
+import { images } from "@/constants/images";
+import React, { useEffect, useState } from "react";
+import { Image, View } from "react-native";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
+interface Fissure {
+  id: string;
+  activation: string;
+  expiry: string;
+  planet: string;
+  node: string;
+  enemy_faction: string;
+  mission_type: string;
+  tier: string;
+  expired: boolean;
+  isStorm: boolean;
+  isHard: boolean;
+}
+
 const normal = () => {
-  const [fissures, setFissures] = useState([]);
+  const [fissures, setFissures] = useState<Fissure[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/fissures`);
+      const res = await fetch(`${API_URL}/api/fissures/normal`);
       const data = await res.json();
       if (data) {
         setFissures(data);

@@ -1,7 +1,7 @@
-import React from "react";
-import { Tabs } from "expo-router";
-import type { BottomTabsProps } from "react-native-screens";
 import TabBar from "@/components/TabBar";
+import { Tabs } from "expo-router";
+import React from "react";
+import type { BottomTabsProps } from "react-native-screens";
 
 const _layout = () => {
   return (
@@ -17,7 +17,7 @@ const _layout = () => {
         }}
       />
       <Tabs.Screen
-        name="add"
+        name="(add)"
         options={{
           title: "Watcher",
           headerShown: false,
