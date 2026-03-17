@@ -1,0 +1,15 @@
+services:
+  warframe_watcher:
+    build: .
+    ports:
+      - "8081:8081"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - REACT_NATIVE_PACKAGER_HOSTNAME=${EXPO_PUBLIC_API_URL}
+      - EXPO_DEVTOOLS-LISTEN_ADDRESS=0.0.0.0
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
