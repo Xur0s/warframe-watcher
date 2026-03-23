@@ -65,14 +65,14 @@ export const OptionBox = () => {
         { translateX: 207.5 },
         {
           translateY: isFocused
-            ? progress.value == 1
+            ? progress.value === 1
               ? 0
               : interpolate(progress.value, [0, 1], [-155, 0])
-            : progress.value == 0
+            : progress.value === 0
               ? 207.5
               : interpolate(progress.value, [0, 1], [52.5, 207.5]),
         },
-        { scale: isFocused ? 1 : progress.value == 0 ? 4 : 1 },
+        { scale: isFocused ? 1 : progress.value === 0 ? 4 : 1 },
         { translateX: -207.5 },
         { translateY: isFocused ? 0 : -207.5 },
       ],

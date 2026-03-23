@@ -11,6 +11,8 @@ import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "../global.css";
 
+// Test comment
+
 export default function RootLayout() {
   let [fontsLoaded] = useFonts({
     RobotoCondensed_400Regular,

@@ -1,6 +1,5 @@
-import { View, Text, useWindowDimensions } from "react-native";
-import React, { use, useEffect } from "react";
-import Svg, { G, Path, Rect } from "react-native-svg";
+import React, { useEffect } from "react";
+import { useWindowDimensions } from "react-native";
 import Animated, {
   interpolate,
   interpolateColor,
@@ -8,6 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import Svg, { G, Path, Rect } from "react-native-svg";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
