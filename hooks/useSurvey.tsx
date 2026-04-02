@@ -1,4 +1,5 @@
 import { question, questionResult } from "@/types/question";
+import { router } from "expo-router";
 import { useState } from "react";
 
 export function useSurvey(questions: question[]) {
@@ -34,7 +35,7 @@ export function useSurvey(questions: question[]) {
 
   function goBack() {
     if (history.length < 1) {
-      return null;
+      return router.push("/(tabs)/(add)");
     }
 
     const prevQuestion = history[history.length - 1];

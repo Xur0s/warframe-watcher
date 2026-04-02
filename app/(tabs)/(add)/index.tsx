@@ -24,7 +24,7 @@ const add = () => {
         <Text className="text-[#A2AECB] absolute top-32 left-4 text-[2.8rem] font-roboto-condensed">
           NOW WATCHING:
         </Text>
-        <View className="absolute bottom-40 rounded">
+        <View className="absolute bottom-36 rounded">
           <AddButton />
         </View>
       </View>

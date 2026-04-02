@@ -16,9 +16,14 @@
             "icon": "terminal-bash"
           }
         },
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "sh"
       }
     },
     "remoteUser": "root"
-  }
+  },
+  "containerEnv": {    
+    "EXPO_USE_POLLING": "true",
+    "CHOKIDAR_USEPOLLING": "true",
+    "WATCHPACK_POLLING": "true",
+    "METRO_WATCH_USE_POLLING": "true"}
 }

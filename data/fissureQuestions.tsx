@@ -10,7 +10,7 @@ export const fissureQuestions: question[] = [
     choices: ["Any", "Lith", "Meso", "Neo", "Axi", "Requiem", "Omnia"],
   },
   {
-    id: "MissionType",
+    id: "Mission Type",
     choices: ["Any", "Standard", "Endless"],
     subQuestions: {
       subId: "Mission",
