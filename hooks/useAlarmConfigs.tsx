@@ -8,13 +8,14 @@ interface Config {
   mission: string;
   planet: string;
   pNode: string;
+  isActive: boolean;
 }
 
 const CONFIGS_INDEX_KEY = "@alarms_configs_index";
 const CONFIG_PREFIX = "@alarm_config_";
 
 export const useAlarmConfigs = () => {
-  const [configs, setConfigs] = useState<Config[]>([]);
+  const [configs, setConfigs] = useState<Map<string, Config[]>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -27,16 +28,14 @@ export const useAlarmConfigs = () => {
       const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
       const configNames = indexJson ? JSON.parse(indexJson) : [];
 
-      const loadedConfigs: Config[] = [];
+      const loadedConfigs = new Map<string, Config[]>();
 
       for (const name of configNames) {
         const configKey = `${CONFIG_PREFIX}${name}`;
         const configData = await AsyncStorage.getItem(configKey);
 
         if (configData) {
-          loadedConfigs.push({
-            ...JSON.parse(configData),
-          });
+          loadedConfigs.set(name, JSON.parse(configData));
         }
       }
 
@@ -159,6 +158,31 @@ export const useAlarmConfigs = () => {
       } else {
         console.error(
           `Failed to delete ${name} alarm config: Error message could not be found`,
+        );
+      }
+    }
+  }, []);
+
+  const toggleConfig = useCallback(async (name: string) => {
+    try {
+      const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
+      const configNames = indexJson ? JSON.parse(indexJson) : [];
+
+      if (!configNames.includes(name)) {
+        throw new Error(`Failed to find a configuration named ${name}`);
+      }
+
+      const configKey = `${CONFIG_PREFIX}${name}`;
+      const getConfig = await AsyncStorage.getItem(configKey);
+      const configData = getConfig ? JSON.parse(getConfig) : {};
+
+      updateConfig({ ...configData, isActive: !configData.isActive });
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(`Failed to toggle ${name} alarm config: `, err.message);
+      } else {
+        console.error(
+          `Failed to toggle ${name} alarm config: Error message could not be found`,
         );
       }
     }
