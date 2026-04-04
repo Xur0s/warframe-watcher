@@ -10,13 +10,13 @@ export function useSurvey(questions: question[]) {
   const currentQuestion = queue[0];
 
   function nextQuestion(choice: string) {
-    let nextQ = queue.slice(1);
+    let nextQ = queue.slice(1); // Delete 1st item from array
 
     if (currentQuestion.subQuestions?.questions[choice]) {
       const subId = currentQuestion.subQuestions.subId;
       const choices = currentQuestion.subQuestions.questions[choice];
 
-      nextQ.unshift({ id: subId, choices: choices });
+      nextQ.unshift({ id: subId, choices: choices }); // Add item to array at idx 0
     }
 
     setQueue(nextQ);
@@ -40,7 +40,7 @@ export function useSurvey(questions: question[]) {
 
     const prevQuestion = history[history.length - 1];
 
-    setHistory((h) => h.slice(0, -1));
+    setHistory((h) => h.slice(0, -1)); // history = [first idx, ... , last idx - 1]
 
     setQueue((q) => [prevQuestion, ...q]);
   }

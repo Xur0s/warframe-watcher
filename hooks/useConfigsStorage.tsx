@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Config {
   name: string;
@@ -14,12 +14,12 @@ interface Config {
 const CONFIGS_INDEX_KEY = "@alarms_configs_index";
 const CONFIG_PREFIX = "@alarm_config_";
 
-export const useAlarmConfigs = () => {
-  const [configs, setConfigs] = useState<Map<string, Config[]>>([]);
+export const useConfigsStorage = () => {
+  const [configs, setConfigs] = useState<Map<string, Config>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Loading all alarms
+  // Loading all configs
   const loadAllConfigs = useCallback(async () => {
     try {
       setLoading(true);
@@ -28,7 +28,7 @@ export const useAlarmConfigs = () => {
       const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
       const configNames = indexJson ? JSON.parse(indexJson) : [];
 
-      const loadedConfigs = new Map<string, Config[]>();
+      const loadedConfigs = new Map<string, Config>();
 
       for (const name of configNames) {
         const configKey = `${CONFIG_PREFIX}${name}`;
@@ -41,21 +41,21 @@ export const useAlarmConfigs = () => {
 
       setConfigs(loadedConfigs);
     } catch (err) {
+      setError(err instanceof Error ? err : new Error("Unknown Error"));
       if (err instanceof Error) {
-        setError(err);
         console.error("Failed to load all alarm configs:", err.message);
       } else {
-        console.error(
-          "Failed to load all alarm configs: Error message could not be found",
-        );
+        console.error("Failed to load all alarm configs: Unknown Error");
       }
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Saving alarm
+  // Saving config
   const saveConfig = useCallback(async (configData: Config) => {
+    setError(null);
+
     try {
       const name = configData.name;
 
@@ -75,19 +75,19 @@ export const useAlarmConfigs = () => {
       const configKey = `${CONFIG_PREFIX}${name}`;
       await AsyncStorage.setItem(configKey, JSON.stringify(configData));
 
-      setConfigs((prev) => [...prev, configData]);
+      setConfigs((prev) => new Map(prev).set(name, configData));
 
       return { success: true };
     } catch (err) {
+      setError(err instanceof Error ? err : new Error("Unknown Error"));
       if (err instanceof Error) {
-        setError(err);
         console.error(
           `Failed to save ${configData.name} alarm config:`,
           err.message,
         );
       } else {
         console.error(
-          `Failed to save ${configData.name} alarm config: Error message could not be found`,
+          `Failed to save ${configData.name} alarm config: Unknown Error`,
         );
       }
 
@@ -95,8 +95,10 @@ export const useAlarmConfigs = () => {
     }
   }, []);
 
-  // Update alarm
+  // Update config
   const updateConfig = useCallback(async (configData: Config) => {
+    setError(null);
+
     try {
       const name = configData.name;
 
@@ -110,19 +112,19 @@ export const useAlarmConfigs = () => {
       const configKey = `${CONFIG_PREFIX}${name}`;
       await AsyncStorage.setItem(configKey, JSON.stringify(configData));
 
-      setConfigs((prev) => [...prev, configData]);
+      setConfigs((prev) => new Map(prev).set(name, configData));
 
       return { success: true };
     } catch (err) {
+      setError(err instanceof Error ? err : new Error("Unknown Error"));
       if (err instanceof Error) {
-        setError(err);
         console.error(
           `Failed to update ${configData.name} alarm config: `,
           err.message,
         );
       } else {
         console.error(
-          `Failed to update ${configData.name} alarm config: Error message could not be found`,
+          `Failed to update ${configData.name} alarm config: Unknown Error`,
         );
       }
 
@@ -130,7 +132,10 @@ export const useAlarmConfigs = () => {
     }
   }, []);
 
+  // Delete config
   const deleteConfig = useCallback(async (name: string) => {
+    setError(null);
+
     try {
       const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
       const configNames = indexJson ? JSON.parse(indexJson) : [];
@@ -151,19 +156,25 @@ export const useAlarmConfigs = () => {
       const configKey = `${CONFIG_PREFIX}${name}`;
       await AsyncStorage.removeItem(configKey);
 
-      setConfigs((prev) => prev.filter((config) => config.name !== name));
+      setConfigs((prev) => {
+        const newMap = new Map(prev);
+        newMap.delete(name);
+        return newMap;
+      });
     } catch (err) {
+      setError(err instanceof Error ? err : new Error("Unknown Error"));
       if (err instanceof Error) {
         console.error(`Failed to delete ${name} alarm config: `, err.message);
       } else {
-        console.error(
-          `Failed to delete ${name} alarm config: Error message could not be found`,
-        );
+        console.error(`Failed to delete ${name} alarm config: Unknown Error`);
       }
     }
   }, []);
 
+  // Toggle config
   const toggleConfig = useCallback(async (name: string) => {
+    setError(null);
+
     try {
       const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
       const configNames = indexJson ? JSON.parse(indexJson) : [];
@@ -174,17 +185,41 @@ export const useAlarmConfigs = () => {
 
       const configKey = `${CONFIG_PREFIX}${name}`;
       const getConfig = await AsyncStorage.getItem(configKey);
-      const configData = getConfig ? JSON.parse(getConfig) : {};
+      const oldConfigData = getConfig ? JSON.parse(getConfig) : {};
+      const newConfigData = {
+        ...oldConfigData,
+        isActive: !oldConfigData.isActive,
+      };
 
-      updateConfig({ ...configData, isActive: !configData.isActive });
+      await AsyncStorage.setItem(configKey, JSON.stringify(newConfigData));
+
+      setConfigs((prev) => new Map(prev).set(name, newConfigData));
     } catch (err) {
+      setError(err instanceof Error ? err : new Error("Unknown Error"));
       if (err instanceof Error) {
         console.error(`Failed to toggle ${name} alarm config: `, err.message);
       } else {
-        console.error(
-          `Failed to toggle ${name} alarm config: Error message could not be found`,
-        );
+        console.error(`Failed to toggle ${name} alarm config: Unknown Error`);
       }
     }
   }, []);
+
+  // Load on Mount
+  useEffect(() => {
+    loadAllConfigs();
+  }, [loadAllConfigs]);
+
+  return {
+    // States
+    configs,
+    loading,
+    error,
+
+    // Functions
+    refreshConfig: loadAllConfigs,
+    saveConfig,
+    updateConfig,
+    deleteConfig,
+    toggleConfig,
+  };
 };

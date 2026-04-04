@@ -1,11 +1,19 @@
 import BlurSurveyScreen from "@/components/BlurSurveyScreen";
 import { fissureQuestions } from "@/data/fissureQuestions";
+import { useConfigsStorage } from "@/hooks/useConfigsStorage";
 import { useSurvey } from "@/hooks/useSurvey";
 import React from "react";
 import { Text, View } from "react-native";
 
-const survey = () => {
+const Survey = () => {
   const { currentQuestion, handleChoice, goBack } = useSurvey(fissureQuestions);
+  const {
+    refreshConfig,
+    saveConfig,
+    updateConfig,
+    deleteConfig,
+    toggleConfig,
+  } = useConfigsStorage();
 
   if (!currentQuestion) {
     return (
@@ -28,4 +36,4 @@ const survey = () => {
   );
 };
 
-export default survey;
+export default Survey;
