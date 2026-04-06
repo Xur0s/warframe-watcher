@@ -5,6 +5,7 @@ export type question = {
     subId: string;
     questions: Record<string, string[]>;
   };
+  type?: string;
 };
 
 export type questionResult = {

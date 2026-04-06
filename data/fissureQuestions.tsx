@@ -361,4 +361,5 @@ export const fissureQuestions: question[] = [
       },
     },
   },
+  { id: "Configuration Name", choices: ["Confirm"], type: "textBox" },
 ];
