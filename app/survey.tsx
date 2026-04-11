@@ -29,6 +29,7 @@ const Survey = () => {
         Title={currentQuestion.id}
         Subtitle="Choose one"
         Choices={currentQuestion.choices}
+        Type={currentQuestion.type}
         AnswerCallBack={handleChoice}
         goBack={goBack}
       />

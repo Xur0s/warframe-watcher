@@ -11,12 +11,14 @@ import { Text, useWindowDimensions, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Svg, { G, Path, Rect } from "react-native-svg";
 import BackArrow from "./BackArrow";
+import TextBox from "./SurveyConfigTextBox";
 import OptionBox from "./SurveyOptionBox2";
 
 interface BlurSurveyScreenProps {
   Title: string;
   Subtitle: string;
   Choices: string[];
+  Type?: string | null;
   AnswerCallBack: (choice: string) => void;
   goBack: () => void;
 }
@@ -114,24 +116,38 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
         </Text>
       </View>
 
-      <View
-        className=""
-        style={{ top: screenHeight * 0.1, height: screenHeight * 0.62 }}
-      >
-        <FlatList
-          windowSize={10}
-          contentContainerClassName="relative"
-          showsVerticalScrollIndicator={false}
-          data={data}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+      {props.Type && props.Type === "textBox" ? (
+        <View>
+          <View className="" style={{ top: screenHeight * 0.22 }}>
+            <TextBox />
+          </View>
+          <View className="" style={{ top: screenHeight * 0.3 }}>
             <OptionBox
-              Choice={item.choice}
+              Choice={data[0].choice}
               AnswerCallBack={props.AnswerCallBack}
             />
-          )}
-        />
-      </View>
+          </View>
+        </View>
+      ) : (
+        <View
+          className=""
+          style={{ top: screenHeight * 0.1, height: screenHeight * 0.62 }}
+        >
+          <FlatList
+            windowSize={10}
+            contentContainerClassName="relative"
+            showsVerticalScrollIndicator={false}
+            data={data}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <OptionBox
+                Choice={item.choice}
+                AnswerCallBack={props.AnswerCallBack}
+              />
+            )}
+          />
+        </View>
+      )}
       <View className="absolute bottom-[75] self-center">
         <BackArrow goBack={props.goBack} />
       </View>
