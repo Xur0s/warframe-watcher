@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Pressable, Text, useWindowDimensions, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
   interpolate,
@@ -15,15 +15,15 @@ const AnimatedText = Animated.createAnimatedComponent(Text);
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 interface OptionBoxProps {
+  Width: number;
+  Height: number;
   Choice: string;
   AnswerCallBack: (choice: string) => void;
 }
 
 const OptionBox = (props: OptionBoxProps) => {
-  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-
   const aspectRatio = 120 / 500;
-  const width = screenWidth;
+  const width = props.Width;
   const height = width * aspectRatio;
 
   const progress = useSharedValue(0);

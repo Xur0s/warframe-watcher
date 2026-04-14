@@ -117,12 +117,19 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
       </View>
 
       {props.Type && props.Type === "textBox" ? (
-        <View>
-          <View className="" style={{ top: screenHeight * 0.22 }}>
+        <View className="items-center">
+          <View className="items-center" style={{ top: screenHeight * 0.22 }}>
             <TextBox />
           </View>
-          <View className="" style={{ top: screenHeight * 0.3 }}>
+          <View
+            className="absolute"
+            style={{
+              top: screenHeight * 0.45,
+            }}
+          >
             <OptionBox
+              Width={screenWidth * 0.75}
+              Height={screenHeight}
               Choice={data[0].choice}
               AnswerCallBack={props.AnswerCallBack}
             />
@@ -141,6 +148,8 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <OptionBox
+                Width={screenWidth}
+                Height={screenHeight}
                 Choice={item.choice}
                 AnswerCallBack={props.AnswerCallBack}
               />
