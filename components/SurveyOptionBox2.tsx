@@ -17,6 +17,7 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 interface OptionBoxProps {
   Width: number;
   Height: number;
+  Title: string;
   Choice: string;
   AnswerCallBack: (choice: string) => void;
 }
@@ -99,7 +100,7 @@ const OptionBox = (props: OptionBoxProps) => {
             className="font-roboto-semiBold"
             style={[{ letterSpacing: 3, fontSize: 18 }, textAnimatedStyle]}
           >
-            {props.Choice.toUpperCase()}
+            {props.Title.toUpperCase()}
           </AnimatedText>
         </View>
       </AnimatedView>

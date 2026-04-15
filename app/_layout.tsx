@@ -5,6 +5,7 @@ import {
 import {
   RobotoCondensed_100Thin,
   RobotoCondensed_400Regular,
+  RobotoCondensed_500Medium,
   useFonts,
 } from "@expo-google-fonts/roboto-condensed";
 import { Stack } from "expo-router";
@@ -16,6 +17,7 @@ import "../global.css";
 export default function RootLayout() {
   let [fontsLoaded] = useFonts({
     RobotoCondensed_400Regular,
+    RobotoCondensed_500Medium,
     Roboto_200ExtraLight,
     Roboto_600SemiBold,
     RobotoCondensed_100Thin,

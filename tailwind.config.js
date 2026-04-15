@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       fontFamily: {
         "roboto-condensed": ["RobotoCondensed_400Regular"],
+        "roboto-condensed-medium": ["RobotoCondensed_500Medium"],
         "roboto-condensed-light": ["RobotoCondensed_100Thin"],
         "roboto-extraLight": ["Roboto_200ExtraLight"],
         "roboto-semiBold": ["Roboto_600SemiBold"],

@@ -107,7 +107,9 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
 
       <View className="items-center" style={{ top: height * 0.14 }}>
         <Text className="text-[#A2AECB] text-[1rem] font-roboto-condensed-light">
-          {props.Subtitle}
+          {props.Type && props.Type === "textBox"
+            ? "Type a name"
+            : props.Subtitle}
         </Text>
       </View>
       <View className="items-center top-20" style={{ top: height * 0.06 }}>
@@ -130,6 +132,7 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
             <OptionBox
               Width={screenWidth * 0.75}
               Height={screenHeight}
+              Title={data[0].choice}
               Choice={data[0].choice}
               AnswerCallBack={props.AnswerCallBack}
             />
@@ -150,6 +153,7 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
               <OptionBox
                 Width={screenWidth}
                 Height={screenHeight}
+                Title={item.choice}
                 Choice={item.choice}
                 AnswerCallBack={props.AnswerCallBack}
               />

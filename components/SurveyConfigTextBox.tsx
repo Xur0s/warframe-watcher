@@ -9,11 +9,12 @@ import {
 } from "@shopify/react-native-skia";
 import * as React from "react";
 import { useState } from "react";
-import { TextInput, useWindowDimensions, View } from "react-native";
-import Svg, { G, Path, Text, TSpan } from "react-native-svg";
+import { Text, TextInput, useWindowDimensions, View } from "react-native";
+import Svg, { G, Path } from "react-native-svg";
 
 const TextBox = () => {
   const [name, setName] = useState("");
+  const [isFocused, setFocused] = useState(false);
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
@@ -40,7 +41,7 @@ const TextBox = () => {
             d="M960.221 121.262L999.894 249.707L960.221 378.151H122.057L82.3835 249.707L122.057 121.262H960.221Z"
             fill="url(#paint0_linear_539_2)"
             stroke="#A2AECB"
-            strokeWidth={1.99913}
+            strokeWidth={5}
           />
           <G id="RightFrame">
             <Path
@@ -62,18 +63,6 @@ const TextBox = () => {
               stroke="#A2AECB"
             />
           </G>
-          <Text
-            id="Text"
-            fill="white"
-            fontFamily="Roboto Condensed"
-            fontSize={69.9697}
-            fontWeight={500}
-            letterSpacing="0em"
-          >
-            <TSpan x={323.475} y={273.623}>
-              {"Cosmic Horrors"}
-            </TSpan>
-          </Text>
         </G>
       </Svg>
 
@@ -83,7 +72,7 @@ const TextBox = () => {
             <CanvasLinearGradient
               start={vec(541.139, 120.262)}
               end={vec(541.139, 379.151)}
-              colors={["#010411", "#3D4879"]}
+              colors={["#D9D9D9", "#3D4879"]}
               positions={[0.482297, 1]}
             />
           </CanvasPath>
@@ -91,13 +80,14 @@ const TextBox = () => {
       </Canvas>
 
       <View
-        className="absolute"
+        className="absolute justify-center items-center"
         style={{ top: height * 0.37, paddingHorizontal: 20 }}
       >
         <TextInput
+          className="font-roboto-condensed-medium"
           style={{
             fontSize: 20,
-            color: "#FFFFFF",
+            color: "#000000",
             textAlign: "center",
             width: width,
             paddingHorizontal: 20,
@@ -105,12 +95,25 @@ const TextBox = () => {
           }}
           value={name}
           onChangeText={setName}
-          placeholder="Type a name..."
-          placeholderTextColor="#FFFFFF"
+          placeholder=""
           multiline={false}
           numberOfLines={1}
           scrollEnabled={true}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
+        {!isFocused && name.trim().length === 0 && (
+          <Text
+            className="absolute font-roboto-condensed-medium"
+            pointerEvents="none"
+            style={{
+              color: "#3D4879",
+              fontSize: 20,
+            }}
+          >
+            Give it a name...
+          </Text>
+        )}
       </View>
     </View>
   );
