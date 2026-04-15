@@ -99,7 +99,9 @@ const TextBox = () => {
             fontSize: 20,
             color: "#FFFFFF",
             textAlign: "center",
-            width: width * 0.6,
+            width: width,
+            paddingHorizontal: 20,
+            textAlignVertical: "center",
           }}
           value={name}
           onChangeText={setName}
