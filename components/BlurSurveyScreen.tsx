@@ -7,6 +7,7 @@ import {
   useImage,
 } from "@shopify/react-native-skia";
 import * as React from "react";
+import { useState } from "react";
 import { Text, useWindowDimensions, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Svg, { G, Path, Rect } from "react-native-svg";
@@ -37,6 +38,8 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
     id: i.toString(),
     choice: props.Choices[i],
   }));
+
+  const [configName, setConfigName] = useState("");
 
   if (!bgImg) return <View style={{ flex: 1, backgroundColor: "black" }} />;
 
@@ -121,7 +124,11 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
       {props.Type && props.Type === "textBox" ? (
         <View className="items-center">
           <View className="items-center" style={{ top: screenHeight * 0.22 }}>
-            <TextBox />
+            <TextBox
+              AnswerCallBack={(text) => {
+                setConfigName(text);
+              }}
+            />
           </View>
           <View
             className="absolute"
@@ -133,7 +140,7 @@ const BlurSurveyScreen = (props: BlurSurveyScreenProps) => {
               Width={screenWidth * 0.75}
               Height={screenHeight}
               Title={data[0].choice}
-              Choice={data[0].choice}
+              Choice={configName}
               AnswerCallBack={props.AnswerCallBack}
             />
           </View>

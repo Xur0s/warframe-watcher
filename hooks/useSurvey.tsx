@@ -10,6 +10,11 @@ export function useSurvey(questions: question[]) {
   const currentQuestion = queue[0];
 
   function nextQuestion(choice: string) {
+    if (queue.length < 2) {
+      console.log(result);
+      return router.push("/(tabs)/(add)");
+    }
+
     let nextQ = queue.slice(1); // Delete 1st item from array
 
     if (currentQuestion.subQuestions?.questions[choice]) {

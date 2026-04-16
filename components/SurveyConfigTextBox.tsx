@@ -12,7 +12,11 @@ import { useState } from "react";
 import { Text, TextInput, useWindowDimensions, View } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 
-const TextBox = () => {
+interface TextBoxProps {
+  AnswerCallBack: (choice: string) => void;
+}
+
+const TextBox = (props: TextBoxProps) => {
   const [name, setName] = useState("");
   const [isFocused, setFocused] = useState(false);
 
@@ -94,7 +98,10 @@ const TextBox = () => {
             textAlignVertical: "center",
           }}
           value={name}
-          onChangeText={setName}
+          onChangeText={(text) => {
+            setName(text);
+            props.AnswerCallBack(text);
+          }}
           placeholder=""
           multiline={false}
           numberOfLines={1}
