@@ -9,5 +9,5 @@ export type question = {
 };
 
 export type questionResult = {
-  [key: string]: string | undefined;
+  [key: string]: string | boolean | undefined;
 };
