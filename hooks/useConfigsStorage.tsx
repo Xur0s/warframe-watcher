@@ -1,10 +1,7 @@
 import { questionResult } from "@/types/question";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-
-interface Config {
-  data: questionResult;
-}
+import uuid from "react-native-uuid";
 
 const CONFIGS_INDEX_KEY = "@alarms_configs_index";
 const CONFIG_PREFIX = "@alarm_config_";
@@ -54,43 +51,45 @@ export const useConfigsStorage = () => {
     setError(null);
 
     try {
-      if (!(configData.id && typeof configData.id === "string")) {
-        throw new Error(
-          "Config data is missing an id or id is not of type str",
-        );
+      configData = { ...configData, id: uuid.v4() };
+
+      if (!configData.id) {
+        throw new Error("Config data is missing an id ");
+      } else if (typeof configData.id != "string") {
+        throw new Error("Config data id is not of type str");
       }
 
-      const name = configData.id;
+      const id = configData.id;
 
       const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
       const configNames = indexJson ? JSON.parse(indexJson) : [];
 
-      if (configNames.includes(name)) {
-        throw new Error(`A configuration with the name ${name} exists already`);
+      if (configNames.includes(id)) {
+        throw new Error(`A configuration with the id of ${id} exists already`);
       }
 
-      configNames.push(name);
+      configNames.push(id);
       await AsyncStorage.setItem(
         CONFIGS_INDEX_KEY,
         JSON.stringify(configNames),
       );
 
-      const configKey = `${CONFIG_PREFIX}${name}`;
+      const configKey = `${CONFIG_PREFIX}${id}`;
       await AsyncStorage.setItem(configKey, JSON.stringify(configData));
 
-      setConfigs((prev) => new Map(prev).set(name, configData));
+      setConfigs((prev) => new Map(prev).set(id, configData));
 
       return { success: true };
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown Error"));
       if (err instanceof Error) {
         console.error(
-          `Failed to save ${configData.name} alarm config:`,
+          `Failed to save ${configData.id} alarm config:`,
           err.message,
         );
       } else {
         console.error(
-          `Failed to save ${configData.name} alarm config: Unknown Error`,
+          `Failed to save ${configData.id} alarm config: Unknown Error`,
         );
       }
 
@@ -99,62 +98,52 @@ export const useConfigsStorage = () => {
   }, []);
 
   // Update config
-  const updateConfig = useCallback(async (configData: questionResult) => {
-    setError(null);
+  const updateConfig = useCallback(
+    async (id: string, configData: questionResult) => {
+      setError(null);
 
-    try {
-      if (!(configData.id && typeof configData.id === "string")) {
-        throw new Error(
-          "Config data is missing an id or id is not of type str",
-        );
+      try {
+        const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
+        const configNames = indexJson ? JSON.parse(indexJson) : [];
+
+        if (!configNames.includes(id)) {
+          throw new Error(`Failed to find a configuration ${id}`);
+        }
+
+        const configKey = `${CONFIG_PREFIX}${id}`;
+        await AsyncStorage.setItem(configKey, JSON.stringify(configData));
+
+        setConfigs((prev) => new Map(prev).set(id, configData));
+
+        return { success: true };
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error("Unknown Error"));
+        if (err instanceof Error) {
+          console.error(`Failed to update ${id} alarm config: `, err.message);
+        } else {
+          console.error(`Failed to update ${id} alarm config: Unknown Error`);
+        }
+
+        return { success: false };
       }
-
-      const name = configData.id;
-
-      const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
-      const configNames = indexJson ? JSON.parse(indexJson) : [];
-
-      if (!configNames.includes(name)) {
-        throw new Error(`Failed to find a configuration named ${name}`);
-      }
-
-      const configKey = `${CONFIG_PREFIX}${name}`;
-      await AsyncStorage.setItem(configKey, JSON.stringify(configData));
-
-      setConfigs((prev) => new Map(prev).set(name, configData));
-
-      return { success: true };
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Unknown Error"));
-      if (err instanceof Error) {
-        console.error(
-          `Failed to update ${configData.name} alarm config: `,
-          err.message,
-        );
-      } else {
-        console.error(
-          `Failed to update ${configData.name} alarm config: Unknown Error`,
-        );
-      }
-
-      return { success: false };
-    }
-  }, []);
+    },
+    [],
+  );
 
   // Delete config
-  const deleteConfig = useCallback(async (name: string) => {
+  const deleteConfig = useCallback(async (id: string) => {
     setError(null);
 
     try {
       const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
       const configNames = indexJson ? JSON.parse(indexJson) : [];
 
-      if (!configNames.includes(name)) {
-        throw new Error(`Failed to find a configuration named ${name}`);
+      if (!configNames.includes(id)) {
+        throw new Error(`Failed to find a configuration ${id}`);
       }
 
       const updatedNames = configNames.filter(
-        (configName: string) => configName !== name,
+        (configName: string) => configName !== id,
       );
 
       await AsyncStorage.setItem(
@@ -162,37 +151,37 @@ export const useConfigsStorage = () => {
         JSON.stringify(updatedNames),
       );
 
-      const configKey = `${CONFIG_PREFIX}${name}`;
+      const configKey = `${CONFIG_PREFIX}${id}`;
       await AsyncStorage.removeItem(configKey);
 
       setConfigs((prev) => {
         const newMap = new Map(prev);
-        newMap.delete(name);
+        newMap.delete(id);
         return newMap;
       });
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown Error"));
       if (err instanceof Error) {
-        console.error(`Failed to delete ${name} alarm config: `, err.message);
+        console.error(`Failed to delete ${id} alarm config: `, err.message);
       } else {
-        console.error(`Failed to delete ${name} alarm config: Unknown Error`);
+        console.error(`Failed to delete ${id} alarm config: Unknown Error`);
       }
     }
   }, []);
 
   // Toggle config
-  const toggleConfig = useCallback(async (name: string) => {
+  const toggleConfig = useCallback(async (id: string) => {
     setError(null);
 
     try {
       const indexJson = await AsyncStorage.getItem(CONFIGS_INDEX_KEY);
       const configNames = indexJson ? JSON.parse(indexJson) : [];
 
-      if (!configNames.includes(name)) {
-        throw new Error(`Failed to find a configuration named ${name}`);
+      if (!configNames.includes(id)) {
+        throw new Error(`Failed to find a configuration named ${id}`);
       }
 
-      const configKey = `${CONFIG_PREFIX}${name}`;
+      const configKey = `${CONFIG_PREFIX}${id}`;
       const getConfig = await AsyncStorage.getItem(configKey);
       const oldConfigData = getConfig ? JSON.parse(getConfig) : {};
       const newConfigData = {
@@ -202,13 +191,13 @@ export const useConfigsStorage = () => {
 
       await AsyncStorage.setItem(configKey, JSON.stringify(newConfigData));
 
-      setConfigs((prev) => new Map(prev).set(name, newConfigData));
+      setConfigs((prev) => new Map(prev).set(id, newConfigData));
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Unknown Error"));
       if (err instanceof Error) {
-        console.error(`Failed to toggle ${name} alarm config: `, err.message);
+        console.error(`Failed to toggle ${id} alarm config: `, err.message);
       } else {
-        console.error(`Failed to toggle ${name} alarm config: Unknown Error`);
+        console.error(`Failed to toggle ${id} alarm config: Unknown Error`);
       }
     }
   }, []);

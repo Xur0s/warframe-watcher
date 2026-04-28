@@ -14,9 +14,10 @@ export function useSurvey(questions: question[]) {
 
     if (currentQuestion.subQuestions?.questions[choice]) {
       const subId = currentQuestion.subQuestions.subId;
+      const subTitle = currentQuestion.subQuestions.subTitle;
       const choices = currentQuestion.subQuestions.questions[choice];
 
-      nextQ.unshift({ id: subId, choices: choices }); // Add item to array at idx 0
+      nextQ.unshift({ id: subId, title: subTitle, choices: choices }); // Add item to array at idx 0
     }
 
     setQueue(nextQ);

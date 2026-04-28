@@ -2,18 +2,22 @@ import { question } from "@/types/question";
 
 export const fissureQuestions: question[] = [
   {
-    id: "Difficulty",
+    id: "difficulty",
+    title: "Difficulty",
     choices: ["Any", "Normal", "Steel Path"],
   },
   {
-    id: "Relic",
+    id: "relic",
+    title: "Relic",
     choices: ["Any", "Lith", "Meso", "Neo", "Axi", "Requiem", "Omnia"],
   },
   {
-    id: "Mission Type",
+    id: "missionType",
+    title: "Mission Type",
     choices: ["Any", "Standard", "Endless"],
     subQuestions: {
-      subId: "Mission",
+      subId: "mission",
+      subTitle: "Mission",
       questions: {
         Standard: [
           "Capture",
@@ -40,7 +44,8 @@ export const fissureQuestions: question[] = [
     },
   },
   {
-    id: "Planet",
+    id: "planet",
+    title: "Planet",
     choices: [
       "Any",
       "Mercury",
@@ -64,7 +69,8 @@ export const fissureQuestions: question[] = [
       "Zariman",
     ],
     subQuestions: {
-      subId: "Node",
+      subId: "node",
+      subTitle: "Node",
       questions: {
         Mercury: [
           "Caloris",
@@ -361,5 +367,10 @@ export const fissureQuestions: question[] = [
       },
     },
   },
-  { id: "Configuration Name", choices: ["Confirm"], type: "textBox" },
+  {
+    id: "configName",
+    title: "Configuration Name",
+    choices: ["Confirm"],
+    type: "textBox",
+  },
 ];

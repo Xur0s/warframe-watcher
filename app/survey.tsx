@@ -2,8 +2,9 @@ import BlurSurveyScreen from "@/components/BlurSurveyScreen";
 import { fissureQuestions } from "@/data/fissureQuestions";
 import { useConfigsStorage } from "@/hooks/useConfigsStorage";
 import { useSurvey } from "@/hooks/useSurvey";
-import React from "react";
-import { View } from "react-native";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 
 const Survey = () => {
   const { result, currentQuestion, handleChoice, goBack } =
@@ -15,15 +16,27 @@ const Survey = () => {
     deleteConfig,
     toggleConfig,
   } = useConfigsStorage();
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  useEffect(() => {
+    if (isCompleted) {
+      saveConfig(result);
+      refreshConfig();
+      router.navigate("/(tabs)/(add)");
+      console.log(result);
+    }
+  }, [isCompleted, result, saveConfig, refreshConfig]);
 
   if (!currentQuestion) {
-    saveConfig(result);
+    if (!isCompleted) setIsCompleted(true);
+
+    return <Text>Completing Survey...</Text>;
   }
 
   return (
     <View className="flex flex-1 relative">
       <BlurSurveyScreen
-        Title={currentQuestion.id}
+        Title={currentQuestion.title}
         Subtitle="Choose one"
         Choices={currentQuestion.choices}
         Type={currentQuestion.type}

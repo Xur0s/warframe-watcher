@@ -3,13 +3,14 @@ import { Text, useWindowDimensions, View } from "react-native";
 import Svg, { Circle, G, Path, Rect } from "react-native-svg";
 
 interface WatcherCardProps {
-  name: string;
-  difficulty: string;
-  relic: string;
-  mission: string;
-  planet: string;
-  pNode: string;
-  isActive: boolean;
+  id: string;
+  name?: string;
+  difficulty?: string;
+  relic?: string;
+  mission?: string;
+  planet?: string;
+  pNode?: string;
+  isActive?: boolean;
 }
 
 const WatcherCard = (props: WatcherCardProps) => {
@@ -18,6 +19,23 @@ const WatcherCard = (props: WatcherCardProps) => {
   const aspectRatio = 260 / 400;
   const width = screenWidth * 1;
   const height = screenWidth * 0.7;
+
+  if (!props.id) {
+    throw new Error("Config data is missing an id");
+  } else if (typeof props.id != "string") {
+    throw new Error("Config data id is not of type str");
+  }
+
+  const name = props.name ?? "N/A";
+  const difficulty = props.difficulty ?? "N/A";
+  const relic = props.relic ?? "N/A";
+  const mission = props.mission ?? "N/A";
+  const node =
+    props.planet && props.pNode && props.pNode !== "N/A"
+      ? `${props.planet}, ${props.pNode}`
+      : (props.planet ?? "N/A");
+  const isActive = props.isActive ?? false;
+
   return (
     <View className="items-center">
       <Svg width={width} height={height} viewBox="0 0 400 260" fill="none">
@@ -200,7 +218,7 @@ const WatcherCard = (props: WatcherCardProps) => {
             fontSize: 20,
           }}
         >
-          config name
+          {name}
         </Text>
       </View>
 
@@ -289,7 +307,7 @@ const WatcherCard = (props: WatcherCardProps) => {
               fontSize: 14,
             }}
           >
-            Steel Path
+            {difficulty}
           </Text>
           <Text
             className="font-roboto-mono-bold"
@@ -298,7 +316,7 @@ const WatcherCard = (props: WatcherCardProps) => {
               fontSize: 14,
             }}
           >
-            Omnia
+            {relic}
           </Text>
           <Text
             className="font-roboto-mono-bold"
@@ -307,7 +325,7 @@ const WatcherCard = (props: WatcherCardProps) => {
               fontSize: 14,
             }}
           >
-            Void Flood Cascade
+            {mission}
           </Text>
           <Text
             className="font-roboto-mono-bold"
@@ -316,7 +334,7 @@ const WatcherCard = (props: WatcherCardProps) => {
               fontSize: 14,
             }}
           >
-            Senda,Kappa
+            {node}
           </Text>
         </View>
       </View>
