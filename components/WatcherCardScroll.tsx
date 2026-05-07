@@ -1,8 +1,8 @@
-import { useConfigsStorage } from "@/hooks/useConfigsStorage";
+import { useStoreSelectors } from "@/store/userConfigStore";
 import React, { useEffect, useState } from "react";
 import { useWindowDimensions, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import WatcherCard from "./WatcherCard";
+import WatcherCard from "./WatcherCard/WatcherCard";
 
 type Config = {
   id: string;
@@ -17,22 +17,20 @@ type Config = {
 
 const WatcherCardScroll = () => {
   const [configs, setConfigs] = useState<Config[]>([]);
-  const { configs: surveyConfig, refreshConfig } = useConfigsStorage();
-
+  const surveyConfig = useStoreSelectors.use.configs();
+  const clearConfigs = useStoreSelectors.use.clearAllConfigs();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   const width = screenWidth;
   const height = screenHeight * 0.6;
 
-  function normalizeSurveyConfigData(item: any) {
-    if (!item.id) {
+  function normalizeSurveyConfigData([id, item]: [string, any]) {
+    if (!id) {
       throw new Error("Config data is missing an id");
-    } else if (typeof item.id != "string") {
-      throw new Error("Config data id is not of type str");
     }
 
     return {
-      id: item.id,
+      id: id,
       configName:
         item.configName && typeof item.configName === "string"
           ? item.configName
@@ -57,7 +55,7 @@ const WatcherCardScroll = () => {
   }
 
   useEffect(() => {
-    const configArray = [...surveyConfig.values()].map(
+    const configArray = Object.entries(surveyConfig).map(
       normalizeSurveyConfigData,
     );
     setConfigs(configArray);
@@ -65,7 +63,7 @@ const WatcherCardScroll = () => {
 
   return (
     <View
-      className="bg-red-500"
+      className=""
       style={{
         bottom: screenHeight * 0.03,
         width: width,
