@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      DB_WORKER_PASSWORD: ${DB_WORKER_PASSWORD}
+      DB_API_PASSWORD: ${DB_API_PASSWORD}
+      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      retries: 5
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:

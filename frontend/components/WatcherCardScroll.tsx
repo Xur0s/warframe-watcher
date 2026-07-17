@@ -1,0 +1,95 @@
+import { useStoreSelectors } from "@/store/userConfigStore";
+import React, { useEffect, useState } from "react";
+import { useWindowDimensions, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import WatcherCard from "./WatcherCard/WatcherCard";
+
+type Config = {
+  id: string;
+  configName?: string;
+  difficulty?: string;
+  relic?: string;
+  missionType?: string;
+  planet?: string;
+  node?: string;
+  isActive?: boolean;
+};
+
+const WatcherCardScroll = () => {
+  const [configs, setConfigs] = useState<Config[]>([]);
+  const surveyConfig = useStoreSelectors.use.configs();
+  const clearConfigs = useStoreSelectors.use.clearAllConfigs();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+
+  const width = screenWidth;
+  const height = screenHeight * 0.6;
+
+  function normalizeSurveyConfigData([id, item]: [string, any]) {
+    if (!id) {
+      throw new Error("Config data is missing an id");
+    }
+
+    return {
+      id: id,
+      configName:
+        item.configName && typeof item.configName === "string"
+          ? item.configName
+          : "N/A",
+      difficulty:
+        item.difficulty && typeof item.difficulty === "string"
+          ? item.difficulty
+          : "N/A",
+      relic: item.relic && typeof item.relic === "string" ? item.relic : "N/A",
+      missionType:
+        item.missionType && typeof item.missionType === "string"
+          ? item.missionType
+          : "N/A",
+      planet:
+        item.planet && typeof item.planet === "string" ? item.planet : "N/A",
+      node: item.node && typeof item.node === "string" ? item.node : "N/A",
+      isActive:
+        item.isActive && typeof item.isActive === "boolean"
+          ? item.isActive
+          : false,
+    };
+  }
+
+  useEffect(() => {
+    const configArray = Object.entries(surveyConfig).map(
+      normalizeSurveyConfigData,
+    );
+    setConfigs(configArray);
+  }, [surveyConfig]);
+
+  return (
+    <View
+      className=""
+      style={{
+        bottom: screenHeight * 0.03,
+        width: width,
+        height: height,
+      }}
+    >
+      <FlatList
+        data={configs}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View>
+            <WatcherCard
+              id={item.id}
+              name={item.configName}
+              difficulty={item.difficulty}
+              relic={item.relic}
+              mission={item.missionType}
+              planet={item.planet}
+              pNode={item.node}
+              isActive={item.isActive}
+            />
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+export default WatcherCardScroll;
