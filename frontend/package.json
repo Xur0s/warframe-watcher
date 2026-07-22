@@ -26,7 +26,6 @@
     "babel-preset-expo": "~54.0.10",
     "cors": "^2.8.6",
     "dotenv": "^17.2.1",
-    "eas-cli": "^21.0.2",
     "expo": "^54.0.13",
     "expo-blur": "~15.0.8",
     "expo-constants": "~18.0.9",
@@ -77,8 +76,5 @@
     "react-native-svg-transformer": "^1.5.1",
     "typescript": "~5.9.2"
   },
-  "private": true,
-  "overrides": {
-    "minimatch": "^9.0.0"
-  }
+  "private": true
 }
