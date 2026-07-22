@@ -23,6 +23,3 @@ yarn-error.*
 
 #log
 logs/
-
-# private key firebase
-google-services.json
