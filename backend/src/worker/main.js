@@ -24,7 +24,7 @@ async function main() {
       await fissureScheduler.shutdown();
     });
   } catch (err) {
-    console.error("Worker failed to start:", err);
+    console.error("Worker failed:", err);
     process.exit(1);
   }
 }

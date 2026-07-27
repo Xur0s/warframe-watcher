@@ -50,7 +50,9 @@ async function migrate() {
     await client.query("BEGIN");
     try {
       await client.query(sql);
-      await client.query("INSERT INTO meta.migrations (id) VALUES ($1)", [file]);
+      await client.query("INSERT INTO meta.migrations (id) VALUES ($1)", [
+        file,
+      ]);
 
       // Commit changes and conclude SQL transaction
       await client.query("COMMIT");
@@ -71,3 +73,5 @@ migrate().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+
+export default migrate;
