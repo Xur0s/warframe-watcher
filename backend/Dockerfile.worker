@@ -7,4 +7,4 @@ RUN npm ci
 
 COPY . .
 
-CMD ["node", "src/worker/dataWorker.js"]
+CMD ["node", "src/worker/main.js"]

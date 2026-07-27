@@ -1,7 +1,10 @@
-async function registerDevice(deviceId, expoPushToken) {
+export async function registerDevice(deviceId, expoPushToken) {
   const URL = process.env.EXPO_PUBLIC_API_URL;
   const service = "api/devices";
   const data = { deviceId: deviceId, expoPushToken: expoPushToken };
+
+  console.log("Fetching:", `${URL}/${service}`);
+  console.log("Data:", `${data}`);
 
   const res = await fetch(`${URL}/${service}`, {
     method: "POST",
@@ -22,10 +25,11 @@ async function registerDevice(deviceId, expoPushToken) {
     throw new Error(message);
   }
 
+  console.log("Fetching:", `${URL}/${service} success`);
   return res.json();
 }
 
-async function updateActivity(deviceId) {
+export async function updateActivity(deviceId) {
   const URL = process.env.EXPO_PUBLIC_API_URL;
   const service = "api/devices";
   const route = "heartbeat";
@@ -50,5 +54,3 @@ async function updateActivity(deviceId) {
 
   return res.json();
 }
-
-export default { registerDevice, updateActivity };

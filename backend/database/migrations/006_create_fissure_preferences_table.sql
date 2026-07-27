@@ -14,3 +14,5 @@ CREATE TABLE app_data.fissure_preferences (
     REFERENCES app_data.devices(device_id)
     ON DELETE CASCADE
 );
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE app_data.fissure_preferences TO api;

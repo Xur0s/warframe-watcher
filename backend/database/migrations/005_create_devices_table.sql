@@ -3,3 +3,5 @@ CREATE TABLE app_data.devices (
     expo_push_token TEXT NOT NULL UNIQUE,
     last_seen TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE app_data.devices TO api;

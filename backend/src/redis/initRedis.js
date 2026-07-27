@@ -1,15 +1,14 @@
-import { redisClient } from "#redis";
-import logger from "../logger.js";
+import { redisClient, redisSubscriber } from "#redis";
 
-async function initRedis(name = "CLIENT") {
-  await redisClient.connect().then(
-    () => {
-      logger.info(`Redis ${name} connected`);
-    },
-    (error) => {
-      logger.error({ error }, `Redis ${name} connection failed`);
-    }
-  );
+async function initRedis() {
+  try {
+    await Promise.all([redisClient.connect(), redisSubscriber.connect()]);
+
+    console.log("Redis clients conenction established");
+  } catch (err) {
+    console.error("Redis client connection failed", err);
+    throw err;
+  }
 }
 
 export default initRedis;

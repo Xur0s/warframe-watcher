@@ -22,7 +22,7 @@ export function useSurvey(questions: question[]) {
 
     setQueue(nextQ);
 
-    if (queue.length < 2) {
+    if (nextQ.length < 1) {
       return router.push("/(tabs)/(add)");
     }
   }

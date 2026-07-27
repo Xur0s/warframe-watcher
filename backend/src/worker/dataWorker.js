@@ -1,75 +1,82 @@
-import initRedis from "#redisInit";
-import startJobListener from "#redisSubscriber";
-import logger from "../logger.js";
-import TimerSyncService from "./services/TimerSyncService.js";
+/* 
+======================================
+NOT BEING USED, REPLACED BY `main.js`
+======================================
+*/
 
-let isRefreshingExpiry = true;
-let expiryTimeoutId = null;
+// import initRedis from "#redisInit";
+// import startJobListener from "#redisSubscriber";
+// import logger from "../logger.js";
+// import TimerSyncService from "./services/TimerSyncService.js";
+// import missionNotifications from "../api/services/NotificationService.js";
 
-async function main() {
-  try {
-    await initRedis("WORKER");
-    await startJobListener();
+// let isRefreshingExpiry = true;
+// let expiryTimeoutId = null;
 
-    const timerSyncService = new TimerSyncService();
+// async function main() {
+//   try {
+//     await initRedis("WORKER");
+//     await startJobListener();
 
-    await timerSyncService.getTimers();
-    await timerSyncService.expireTimers();
+//     const timerSyncService = new TimerSyncService();
 
-    await handleTimers(timerSyncService);
-  } catch (error) {
-    logger.error("Failed to start worker:", error);
-    process.exit(1);
-  }
-}
+//     await timerSyncService.getTimers();
+//     await timerSyncService.expireTimers();
 
-async function scheduleNextExpiryRefresh(timerSyncService) {
-  if (!isRefreshingExpiry) return;
+//     await handleTimers(timerSyncService);
+//   } catch (error) {
+//     logger.error("Failed to start worker:", error);
+//     process.exit(1);
+//   }
+// }
 
-  let getEarliestExpiry = await timerSyncService.getEarliestExpireTime();
-  if (!getEarliestExpiry) {
-    logger.warn("Failed Expiry: NO TIMERS > Attempting to find new timers");
-    // Tries to get the expiry time 5 times
-    for (let i = 1; i < 6; i++) {
-      getEarliestExpiry = await timerSyncService.getEarliestExpireTime();
-      logger.info({ findingTimersTrial: i });
+// async function scheduleNextExpiryRefresh(timerSyncService) {
+//   if (!isRefreshingExpiry) return;
 
-      if (getEarliestExpiry) {
-        logger.info("Successfully found timer > Expiry continued");
-        break;
-      } else {
-        logger.warn("Failed to find timer");
-      }
-      if (i == 5) return;
-    }
-  }
+//   let getEarliestExpiry = await timerSyncService.getEarliestExpireTime();
+//   if (!getEarliestExpiry) {
+//     logger.warn("Failed Expiry: NO TIMERS > Attempting to find new timers");
+//     // Tries to get the expiry time 5 times
+//     for (let i = 1; i < 6; i++) {
+//       getEarliestExpiry = await timerSyncService.getEarliestExpireTime();
+//       logger.info({ findingTimersTrial: i });
 
-  const earliestExpiryDate = new Date(getEarliestExpiry);
-  const msUntilRefresh = Math.max(0, earliestExpiryDate.getTime() - Date.now());
+//       if (getEarliestExpiry) {
+//         logger.info("Successfully found timer > Expiry continued");
+//         break;
+//       } else {
+//         logger.warn("Failed to find timer");
+//       }
+//       if (i == 5) return;
+//     }
+//   }
 
-  expiryTimeoutId = setTimeout(async () => {
-    await timerSyncService.expireTimers();
-    scheduleNextExpiryRefresh(timerSyncService);
-  }, msUntilRefresh);
-}
+//   const earliestExpiryDate = new Date(getEarliestExpiry);
+//   const msUntilRefresh = Math.max(0, earliestExpiryDate.getTime() - Date.now());
 
-async function handleTimers(timerSyncService) {
-  const updateTimeoutId = setInterval(async () => {
-    await timerSyncService.getTimers();
-  }, 300000); //Every 5 mins
+//   expiryTimeoutId = setTimeout(async () => {
+//     await timerSyncService.expireTimers();
+//     scheduleNextExpiryRefresh(timerSyncService);
+//   }, msUntilRefresh);
+// }
 
-  scheduleNextExpiryRefresh(timerSyncService);
+// async function handleTimers(timerSyncService) {
+//   const updateTimeoutId = setInterval(async () => {
+//     await timerSyncService.getTimers();
+//   }, 300000); //Every 5 mins
 
-  process.on("SIGINT", () => {
-    logger.info("Shutting off worker");
-    isRefreshingExpiry = false;
-    clearInterval(updateTimeoutId);
-    clearInterval(expiryTimeoutId);
-    process.exit(0);
-  });
-}
+//   scheduleNextExpiryRefresh(timerSyncService);
 
-main().catch((error) => {
-  logger.error("Unhandled error in main:", error);
-  process.exit(1);
-});
+//   process.on("SIGINT", () => {
+//     logger.info("Shutting off worker");
+//     isRefreshingExpiry = false;
+//     clearInterval(updateTimeoutId);
+//     clearInterval(expiryTimeoutId);
+//     process.exit(0);
+//   });
+// }
+
+// main().catch((error) => {
+//   logger.error("Unhandled error in main:", error);
+//   process.exit(1);
+// });

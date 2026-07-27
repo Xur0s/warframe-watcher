@@ -1,13 +1,20 @@
 class DeviceController {
   constructor(deviceService) {
     this.deviceService = deviceService;
+
+    // Express invokes route handlers as standalone functions, so bind them to ensure
+    // `this` always refers to the current DeviceController instance.
+    this.registerDevice = this.registerDevice.bind(this);
+    this.updateActivity = this.updateActivity.bind(this);
+    this.getDevice = this.getDevice.bind(this);
+    this.removeDevice = this.removeDevice.bind(this);
   }
 
   async registerDevice(req, res, next) {
     const { deviceId, expoPushToken } = req.body;
 
     try {
-      const device = this.deviceService.register(deviceId, expoPushToken);
+      const device = await this.deviceService.register(deviceId, expoPushToken);
 
       return res.status(200).json(device);
     } catch (err) {
