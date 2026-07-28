@@ -6,9 +6,6 @@ import FissureService from "./services/FissureService.js";
 async function main() {
   console.log("Worker: Starting...");
   try {
-    // Set up redis connections
-    await initRedis();
-
     // Fissure Scheduler
     const fissureRepository = new FissureRepository();
     const fissureService = new FissureService(fissureRepository);

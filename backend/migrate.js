@@ -15,63 +15,61 @@ const client = new Client({
 async function migrate() {
   await client.connect();
 
-  // Ensures migration table exists
-  await client.query(`
+  // Try-finally ensures client is closes, even if an error occurs, it will always run `client.end()`
+  try {
+    // Ensures migration table exists
+    await client.query(`
         CREATE TABLE IF NOT EXISTS meta.migrations (
             id TEXT PRIMARY KEY,
             applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
     `);
 
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  // Looks into app folder and finds database/migrations
-  const migrationsDir = path.join(__dirname, "database", "migrations");
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    // Looks into app folder and finds database/migrations
+    const migrationsDir = path.join(__dirname, "database", "migrations");
 
-  const files = fs
-    .readdirSync(migrationsDir) // Returns an array of file names inside of the dirctory
-    .filter((file) => file.endsWith(".sql")) // Ensures there is only file names with '.sql' left in the array
-    .sort(); // Sorts file names numerically/alphabetically
+    const files = fs
+      .readdirSync(migrationsDir) // Returns an array of file names inside of the dirctory
+      .filter((file) => file.endsWith(".sql")) // Ensures there is only file names with '.sql' left in the array
+      .sort(); // Sorts file names numerically/alphabetically
 
-  // For each file name, find file name in migrations table,
-  // if can't then run the file and put the file name into table
-  for (const file of files) {
-    const result = await client.query(
-      "SELECT 1 FROM meta.migrations WHERE id = $1",
-      [file],
-    );
+    // For each file name, find file name in migrations table,
+    // if can't then run the file and put the file name into table
+    for (const file of files) {
+      const result = await client.query(
+        "SELECT 1 FROM meta.migrations WHERE id = $1",
+        [file],
+      );
 
-    if (result.rowCount > 0) {
-      continue;
+      if (result.rowCount > 0) {
+        continue;
+      }
+
+      const sql = fs.readFileSync(path.join(migrationsDir, file), "utf8");
+
+      // Starts an SQL transaction
+      await client.query("BEGIN");
+      try {
+        await client.query(sql);
+        await client.query("INSERT INTO meta.migrations (id) VALUES ($1)", [
+          file,
+        ]);
+
+        // Commit changes and conclude SQL transaction
+        await client.query("COMMIT");
+      } catch (err) {
+        // Discard changes and conclude SQL transaction
+        await client.query("ROLLBACK");
+
+        throw err;
+      }
     }
-
-    const sql = fs.readFileSync(path.join(migrationsDir, file), "utf8");
-
-    // Starts an SQL transaction
-    await client.query("BEGIN");
-    try {
-      await client.query(sql);
-      await client.query("INSERT INTO meta.migrations (id) VALUES ($1)", [
-        file,
-      ]);
-
-      // Commit changes and conclude SQL transaction
-      await client.query("COMMIT");
-    } catch (err) {
-      // Discard changes and conclude SQL transaction
-      await client.query("ROLLBACK");
-
-      throw err;
-    }
+  } finally {
+    await client.end();
   }
-
-  await client.end();
 
   console.log("Database up to data.");
 }
-
-migrate().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
 
 export default migrate;

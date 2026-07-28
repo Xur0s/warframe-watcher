@@ -1,5 +1,4 @@
 import pkg from "pg";
-import logger from "../../logger.js";
 
 const { Pool } = pkg;
 
@@ -13,7 +12,7 @@ const workerPool = new Pool({
 
 workerPool.on("connect", () => {});
 workerPool.on("error", (err) =>
-  logger.error({ err }, "Failed to connect WORKER user to database"),
+  console.error("Failed to connect WORKER user to database", err),
 );
 
 export default workerPool;

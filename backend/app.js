@@ -4,11 +4,15 @@ import timerRouter from "./src/api/routes/timerRoutes.js";
 import deviceRouter from "./src/api/routes/deviceRoutes.js";
 import preferenceRouter from "./src/api/routes/preferenceRoutes.js";
 import notificationRouter from "./src/api/routes/notificationRoutes.js";
+import healthRouter from "./src/api/routes/healthRoutes.js";
 
 const app = express();
 
 app.use(cors);
 app.use(express.json());
+
+// Set up health endpoint to be called by Docker
+app.use("/health", healthRouter);
 
 app.use("/api/fissures", timerRouter);
 

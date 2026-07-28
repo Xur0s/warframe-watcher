@@ -1,4 +1,3 @@
-import logger from "../../logger.js";
 import { redisClient } from "../../redis/index.js";
 import ApiTimerModel from "../models/apiModel.js";
 
@@ -16,7 +15,7 @@ const TimerController = {
               data: dbTimers,
             }),
           )
-          .catch((err) => logger.error({ err }, "Cache publish failed"));
+          .catch((err) => console.error("Cache publish failed", error));
       });
 
       return res.json(dbTimers);
@@ -41,7 +40,7 @@ const TimerController = {
       const cachedTimers = activeTimers.map((data) => JSON.parse(data));
       return res.json(cachedTimers);
     } catch (err) {
-      logger.error({ err });
+      console.log(err);
       return fetchFromDb();
     }
   },
@@ -59,7 +58,7 @@ const TimerController = {
               data: dbTimers,
             }),
           )
-          .catch((err) => logger.error({ err }, "Cache publish failed"));
+          .catch((err) => console.log("Cache publish failed", err));
       });
 
       return res.json(dbTimers);
@@ -88,8 +87,7 @@ const TimerController = {
 
       return res.json(normalFissures);
     } catch (err) {
-      console.log({ err });
-      logger.error({ err });
+      console.log(err);
       return fetchFromDb();
     }
   },
@@ -107,7 +105,7 @@ const TimerController = {
               data: dbTimers,
             }),
           )
-          .catch((err) => logger.error({ err }, "Cache publish failed"));
+          .catch((err) => console.error("Cache publish failed", err));
       });
 
       return res.json(dbTimers);
@@ -141,7 +139,7 @@ const TimerController = {
 
       return res.json(hardFissures);
     } catch (err) {
-      logger.error({ err });
+      console.log(err);
       return fetchFromDb();
     }
   },
@@ -159,7 +157,7 @@ const TimerController = {
               data: dbTimers,
             }),
           )
-          .catch((err) => logger.error({ err }, "Cache publish failed"));
+          .catch((err) => console.log("Cache publish failed", err));
       });
 
       return res.json(dbTimers);
@@ -186,7 +184,7 @@ const TimerController = {
 
       return res.json(stormFissures);
     } catch (err) {
-      logger.error({ err });
+      console.log(err);
       return fetchFromDb();
     }
   },

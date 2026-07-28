@@ -1,5 +1,3 @@
-import logger from "../../logger.js";
-
 import pkg from "pg";
 
 const { Pool } = pkg;
@@ -13,10 +11,10 @@ const apiPool = new Pool({
 });
 
 apiPool.on("connect", () =>
-  logger.info("Successfully connected API user to database"),
+  console.log("Successfully connected API user to database"),
 );
 apiPool.on("error", (err) =>
-  logger.error({ err }, "Failed to connect API user to database"),
+  console.error("Failed to connect API user to database", err),
 );
 
 export default apiPool;
