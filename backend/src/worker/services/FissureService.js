@@ -1,4 +1,4 @@
-import { redisClient } from "#redis";
+import { redisClient } from "../../redis/index.js";
 import worldstateData from "warframe-worldstate-data";
 
 class FissureService {
@@ -109,12 +109,11 @@ class FissureService {
       this.lastSyncDate = new Date();
       this.syncCount++;
 
-      console.log(`
-        Fissures inserted: ${fissuresInserted},
-        Sync date: ${this.lastSyncDate},
-        Sync count: ${this.syncCount},
-        Sync successful
-        `);
+      console.log("Fissure Service Log:Sync successful", {
+        "Fissures inserted": fissuresInserted,
+        "Sync date": this.lastSyncDate,
+        "Sync count": this.syncCount,
+      });
 
       // Return if successful
       return {

@@ -4,6 +4,20 @@ class FissureScheduler {
 
     this.activeTimeouts = new Set();
     this.stopped = false; // Used to ensure that no new method calls will be made after shutdown() method has been called
+
+    // These methods are called inside of a function and thus lose their context, so they need to be binded to an instance
+    this.startRefresh = this.startRefresh.bind(this);
+    this.startExpiry = this.startExpiry.bind(this);
+  }
+
+  async initialize() {
+    console.log("WORKER: Initializing");
+    try {
+      console.log("WORKER: Initial Warframe API call for fissure data...");
+      await this.fissureService.getFissures();
+    } catch (err) {
+      console.error("Worker scheduler Error: Initializing failed", err);
+    }
   }
 
   // Refresh fissure missions
@@ -15,7 +29,7 @@ class FissureScheduler {
       this.activeTimeouts.delete(timeoutId);
 
       try {
-        console.log("Getting fissures");
+        console.log("WORKER: Getting fissures");
         await this.fissureService.getFissures();
       } catch (err) {
         console.error("Worker scheduler Error: Refresh fissure data", err);
@@ -23,7 +37,7 @@ class FissureScheduler {
 
       if (this.stopped) return;
 
-      await this.scheduleRefresh(); // recursive call
+      await this.startRefresh(); // recursive call
     }, msUntilNextRefresh);
 
     // runs before `setTimeout`
@@ -34,11 +48,16 @@ class FissureScheduler {
   async startExpiry() {
     const getExpiryTime = await this.fissureService.getEarliestExpireTime();
     const msUntilNextExpiry = getExpiryTime
-      ? Math.max(0, new Date(getExpiryTime) - Date.now())
+      ? Math.max(0, new Date(getExpiryTime).getTime() - Date.now()) + 10000
       : 30 * 60000; // 30 mins
-
+    console.log({
+      msUntilNextExpiry: msUntilNextExpiry,
+      scheduledTime: new Date(Date.now() + msUntilNextExpiry),
+    });
     const timeoutId = setTimeout(async () => {
       this.activeTimeouts.delete(timeoutId);
+
+      console.log({ firedExpiryAt: new Date() });
 
       try {
         await this.fissureService.expireFissures();
@@ -48,7 +67,7 @@ class FissureScheduler {
 
       if (this.stopped) return;
 
-      await this.scheduleExpiry(); // recursive call
+      this.startExpiry(); // recursive call
     }, msUntilNextExpiry);
 
     this.activeTimeouts.add(timeoutId);

@@ -18,8 +18,8 @@ services:
       REDIS_URL: ${REDIS_URL}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health/"]
-      interval: 5s
-      retries: 5
+      interval: 10s
+      retries: 8
     depends_on:
       postgres:
         condition: service_healthy

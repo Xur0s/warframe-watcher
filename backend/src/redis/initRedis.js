@@ -1,4 +1,4 @@
-import { redisClient, redisSubscriber } from "#redis";
+import { redisClient, redisSubscriber } from "./index.js";
 
 async function initRedis() {
   try {

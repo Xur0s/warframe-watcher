@@ -1,4 +1,4 @@
-import initRedis from "#redisInit";
+import initRedis from "../redis/initRedis.js";
 import FissureScheduler from "./FissureScheduler.js";
 import FissureRepository from "./repositories/FissureRepository.js";
 import FissureService from "./services/FissureService.js";
@@ -6,15 +6,21 @@ import FissureService from "./services/FissureService.js";
 async function main() {
   console.log("Worker: Starting...");
   try {
+    // Redis connection
+    console.log("WORKER: Connecting to Redis");
+    await initRedis();
+
     // Fissure Scheduler
     const fissureRepository = new FissureRepository();
     const fissureService = new FissureService(fissureRepository);
     const fissureScheduler = new FissureScheduler(fissureService);
 
+    // Initialize scheduler to get new fissure mission
+    fissureScheduler.initialize().then(() => {
+      fissureScheduler.startExpiry();
+    });
     // Get new fissure missions every 10 mins
     fissureScheduler.startRefresh();
-    // Checks expiry time of missions and marks them as expired in postgres database
-    fissureScheduler.startExpiry();
 
     process.on("SIGINT", async () => {
       console.log("Gracefully shutting down worker...");
