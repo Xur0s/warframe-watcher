@@ -84,13 +84,17 @@ class FissureService {
         }),
       ];
 
-      let fissuresInserted = 0;
-      for (const fissure of fissureData) {
-        const expiryDate = new Date(fissure.expiry);
-        const msTTL = Math.max(0, expiryDate.getTime() - Date.now());
-        const secondsTTL = Math.ceil(msTTL / 1000);
+      // Filters for non-expired fissures
+      const currentFissures = fissureData.filter((fissure) => {
+        return new Date(fissure.expiry).getTime() - Date.now() > 0;
+      });
 
-        if (msTTL <= 0) continue;
+      let fissuresInserted = 0;
+
+      for (const fissure of currentFissures) {
+        const expiryMs = new Date(fissure.expiry).getTime();
+        const msTTL = Math.max(0, expiryMs - Date.now());
+        const secondsTTL = Math.ceil(msTTL / 1000);
 
         // Postgres
         const insertFissure = await this.fissureRepository.insert(fissure);
@@ -100,12 +104,16 @@ class FissureService {
         }
 
         // Redis
-        const multi = await redisClient.setEx(
-          `fissures:${fissure.id}`,
-          secondsTTL,
-          JSON.stringify(fissure),
-        );
+        const transaction = redisClient.multi(); // Used to execute multiple redis commands at once
+
+        transaction
+          .setEx(`fissures:${fissure.id}`, secondsTTL, JSON.stringify(fissure)) // Redis : Data set
+          .zAdd(`fissures:keys`, [{ value: fissure.id, score: expiryMs }]); // Redis : Key set
+
+        // Redis : Execute all commands
+        await transaction.exec();
       }
+
       this.lastSyncDate = new Date();
       this.syncCount++;
 
@@ -140,16 +148,28 @@ class FissureService {
   }
 
   async expireFissures() {
-    const updateExpiredFissures = await this.fissureRepository.updateExpiry();
-    const result = updateExpiredFissures ? updateExpiredFissures : null;
+    const postgresExpiry = await this.fissureRepository.updateExpiry();
+    const postgresResult = postgresExpiry ?? null;
 
-    if (result) {
-      console.log("Successfully expired fissures", {
-        "Expired fissures count": updateExpiredFissures.length,
+    const redisExpiry = await redisClient.zRemRangeByScore(
+      "fissures:keys",
+      "-inf",
+      Date.now(),
+    );
+    const redisResult = redisExpiry ?? null;
+
+    if (postgresResult) {
+      console.log({
+        "Postgres expires": postgresExpiry.length,
+      });
+    }
+    if (redisResult) {
+      console.log({
+        "Redis keys expires": redisExpiry,
       });
     }
 
-    return result;
+    return;
   }
 
   async getStatus() {

@@ -6,39 +6,26 @@ const TimerController = {
     const fetchFromDb = async () => {
       const dbTimers = await ApiTimerModel.getActiveTimers();
 
-      process.nextTick(() => {
-        redisClient
-          .publish(
-            "cache-jobs",
-            JSON.stringify({
-              type: "CACHE_FISSURES",
-              data: dbTimers,
-            }),
-          )
-          .catch((err) => console.error("Cache publish failed", error));
-      });
-
       return res.json(dbTimers);
     };
 
     try {
-      const activeKeys = await redisClient.zRange("fissures:expires", 0, -1);
+      const keys = await redisClient.zRange("fissures:keys", 0, -1);
 
-      if (!activeKeys) {
+      if (!keys) {
         return fetchFromDb();
       }
 
       const multi = redisClient.multi();
-      activeKeys.forEach((key) => multi.get(`fissures:${key}`));
-      const activeTimers = await multi.exec();
+      keys.forEach((key) => multi.get(`fissures:${key}`));
+      const fissures = await multi.exec();
 
-      const missingTimers = activeTimers.filter(([err]) => err == null);
-      if (missingTimers.length > 0) {
-        throw new Error(`Failed to get all timers from Redis`);
-      }
+      const activeFissures = fissures.filter(
+        (fissure) => fissure !== null && fissure !== undefined,
+      );
 
-      const cachedTimers = activeTimers.map((data) => JSON.parse(data));
-      return res.json(cachedTimers);
+      const result = activeFissures.map((data) => JSON.parse(data));
+      return res.json(result);
     } catch (err) {
       console.log(err);
       return fetchFromDb();
