@@ -1,5 +1,5 @@
 class RedisPublisher {
-  constuctor(client) {
+  constructor(client) {
     this.client = client;
   }
 

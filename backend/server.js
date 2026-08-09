@@ -1,6 +1,8 @@
 import initRedis from "./src/redis/initRedis.js";
 import app from "./app.js";
 import migrate from "./migrate.js";
+import RedisSubscriber from "./src/redis/Subscriber.js";
+import { redisClient } from "#redis";
 
 async function main() {
   try {
@@ -8,6 +10,9 @@ async function main() {
 
     // Start redis connection
     await initRedis();
+
+    // Set up redis subscriber
+    const redisSubscriber = new RedisSubscriber(redisClient);
 
     // Runs migrate.js for SQL
     await migrate();

@@ -1,5 +1,6 @@
 import { redisClient } from "../../redis/index.js";
 import worldstateData from "warframe-worldstate-data";
+import RedisPublisher from "../../redis/Publisher.js";
 
 class FissureService {
   constructor(fissureRepository) {
@@ -10,6 +11,7 @@ class FissureService {
   }
 
   async getFissures() {
+    console.log("WORKER: Calling Warframe API...");
     try {
       const response = await fetch(
         "https://api.warframe.com/cdn/worldState.php",
@@ -84,8 +86,17 @@ class FissureService {
         }),
       ];
 
+      const newFissures = await this.saveFissures(fissureData);
+      return newFissures;
+    } catch (err) {
+      console.error("WORKER: Warframe API call failed:", err);
+    }
+  }
+
+  async saveFissures(fissures) {
+    try {
       // Filters for non-expired fissures
-      const currentFissures = fissureData.filter((fissure) => {
+      const currentFissures = fissures.filter((fissure) => {
         return new Date(fissure.expiry).getTime() - Date.now() > 0;
       });
 
