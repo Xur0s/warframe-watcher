@@ -1,7 +1,6 @@
 class FissureScheduler {
-  constructor(fissureService, redisPublisher) {
+  constructor(fissureService) {
     this.fissureService = fissureService;
-    this.redisPublisher = redisPublisher;
 
     this.activeTimeouts = new Set();
     this.stopped = false; // Used to ensure that no new method calls will be made after shutdown() method has been called
@@ -16,8 +15,7 @@ class FissureScheduler {
     try {
       console.log("WORKER: Initial Warframe API call for fissure data...");
 
-      const fissures = await this.fissureService.getFissures();
-      this.redisPublisher.publish("new-fissures", fissures);
+      await this.fissureService.getFissures();
     } catch (err) {
       console.error("Worker scheduler Error: Initializing failed", err);
     }

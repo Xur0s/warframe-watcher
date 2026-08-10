@@ -87,6 +87,11 @@ class FissureService {
       ];
 
       const newFissures = await this.saveFissures(fissureData);
+
+      // Publish fissures to redis
+      const redisPublisher = new RedisPublisher(redisClient);
+      redisPublisher.publish("new-fissure", newFissures);
+
       return newFissures;
     } catch (err) {
       console.error("WORKER: Warframe API call failed:", err);

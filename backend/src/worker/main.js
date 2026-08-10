@@ -1,6 +1,4 @@
-import { redisClient } from "#redis";
 import initRedis from "../redis/initRedis.js";
-import RedisPublisher from "../redis/Publisher.js";
 import FissureScheduler from "./FissureScheduler.js";
 import FissureRepository from "./repositories/FissureRepository.js";
 import FissureService from "./services/FissureService.js";
@@ -15,11 +13,7 @@ async function main() {
     // Fissure Scheduler
     const fissureRepository = new FissureRepository();
     const fissureService = new FissureService(fissureRepository);
-    const redisPublisher = new RedisPublisher(redisClient);
-    const fissureScheduler = new FissureScheduler(
-      fissureService,
-      redisPublisher,
-    );
+    const fissureScheduler = new FissureScheduler(fissureService);
 
     // Initialize scheduler to get new fissure mission
     fissureScheduler.initialize().then(() => {
