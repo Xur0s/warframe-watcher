@@ -1,5 +1,6 @@
 CREATE TABLE app_data.fissures_notfication (
     fissure_id NOT NULL PRIMARY KEY,
+    notification_sent BOOLEAN NOT NULL,
     processed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 )
 

@@ -3,6 +3,7 @@ import app from "./app.js";
 import migrate from "./migrate.js";
 import RedisSubscriber from "./src/redis/Subscriber.js";
 import { redisClient } from "#redis";
+import handleNewFissures from "./handleNewFissures.js";
 
 async function main() {
   try {
@@ -13,6 +14,8 @@ async function main() {
 
     // Set up redis subscriber
     const redisSubscriber = new RedisSubscriber(redisClient);
+    // Listens for "new-fissures" and sends notfications for new missions using "handleNewFissures"
+    redisSubscriber.subscribe("new-fissures", handleNewFissures);
 
     // Runs migrate.js for SQL
     await migrate();

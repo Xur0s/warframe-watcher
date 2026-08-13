@@ -19,20 +19,16 @@ class FissureNotficationService {
     return this.fissureNotficationRepository.delete(fissureId);
   }
 
-  async hasFissure(fissureId) {
+  async getAllUnsentFissuresIds() {
+    return this.fissureNotficationRepository.selectUnsentFissures();
+  }
+
+  async markSent(fissureId) {
     if (!fissureId) {
-      throw new Error("Fissure id is required for selection!");
+      throw new Error("Fissure id is required for update!");
     }
 
-    try {
-      const res = await this.fissureNotficationRepository.select(fissureId);
-
-      return res ? true : false;
-    } catch (err) {
-      console.error("SQL selection failed:", err);
-
-      return false;
-    }
+    return this.fissureNotficationRepository.updateNotificationSent(fissureId);
   }
 }
 

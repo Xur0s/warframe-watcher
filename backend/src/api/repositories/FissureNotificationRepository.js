@@ -8,7 +8,9 @@ class FissureNotificationRepository {
     const { rows } = apiPool.query(
       `
         INSERT INTO (${FissureNotificationRepository.table})
-        VALUES ($1)
+        VALUES ($1, FALSE)
+        ON CONFLICT (fissure_id)
+        DO NOTHING
         RETURNING *;
       `,
       [fissureId],
@@ -21,7 +23,7 @@ class FissureNotificationRepository {
     const { rowCount } = apiPool.query(
       `
         DELETE FROM ${FissureNotificationRepository.table}
-        WHERE fissure_id = $1
+        WHERE fissure_id = $1;
       `,
       [fissureId],
     );
@@ -29,16 +31,30 @@ class FissureNotificationRepository {
     return rowCount > 0;
   }
 
-  async select(fissureId) {
+  // Select unsent fissures
+  async selectUnsentFissures() {
     const { rows } = apiPool.query(
       `
         SELECT * FROM ${FissureNotificationRepository.table}
+        WHERE notification_sent = FALSE;
+      `,
+    );
+
+    return rows;
+  }
+
+  async updateNotificationSent(fissureId) {
+    const { rows } = apiPool.query(
+      `
+        UPDATE ${FissureNotificationRepository.table}
+        SET notification_sent = TRUE
         WHERE fissure_id = $1
+        RETURNING *;
       `,
       [fissureId],
     );
 
-    return rows;
+    return rows[0] ?? null;
   }
 }
 
