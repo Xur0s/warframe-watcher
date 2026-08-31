@@ -1,24 +1,4 @@
-import FissureNotficationService from "./src/api/services/FissureNotificationService.js";
-import FissureNotificationRepository from "./src/api/repositories/FissureNotificationRepository.js";
-import NotificationService from "./src/api/services/NotificationService";
-import ExpoService from "./src/api/services/ExpoService.js";
-import NotificationRepository from "./src/api/repositories/NotificationRepository";
-
-async function handleNewFissures(fissures) {
-  // Used for the "fissure notfication" database table
-  const fissureNotificationRepository = new FissureNotificationRepository();
-  const fissureNotficationService = new FissureNotficationService(
-    fissureNotificationRepository,
-  );
-
-  // Used to send notifications using expo tokens
-  const expoService = new ExpoService();
-  const notificationRepository = new NotificationRepository();
-  const notificationService = new NotificationService(
-    notificationRepository,
-    expoService,
-  );
-
+async function handleNewFissures(fissures, fissureNotficationTrackerService) {
   try {
     // Record all fissures currently avaliable into "fissure notfication" table, if not already inserted
     await Promise.all(

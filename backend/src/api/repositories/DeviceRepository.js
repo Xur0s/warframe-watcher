@@ -38,6 +38,18 @@ class DeviceRepository {
     return rows[0] ?? null;
   }
 
+  async findByToken(token) {
+    const { rows } = await apiPool.query(
+      `
+        SELECT * FROM ${DeviceRepository.table}
+        WHERE expo_push_token = $1
+      `,
+      [token],
+    );
+
+    return rows[0] ?? null;
+  }
+
   async updateLastSeen(device_id) {
     const { rows } = await apiPool.query(
       `

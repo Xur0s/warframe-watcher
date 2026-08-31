@@ -4,16 +4,16 @@ class FissureNotificationRepository {
   static schema = "app_data";
   static table = `${FissureNotificationRepository.schema}.fissures_notification`;
 
-  async insert(fissureId) {
-    const { rows } = apiPool.query(
+  async insert(fissureId, deviceId) {
+    const { rows } = await apiPool.query(
       `
         INSERT INTO (${FissureNotificationRepository.table})
-        VALUES ($1, FALSE)
-        ON CONFLICT (fissure_id)
+        VALUES ($1, $2, "Pending")
+        ON CONFLICT (fissure_id, device_id)
         DO NOTHING
         RETURNING *;
       `,
-      [fissureId],
+      [fissureId, deviceId],
     );
 
     return rows[0];
@@ -32,11 +32,11 @@ class FissureNotificationRepository {
   }
 
   // Select unsent fissures
-  async selectUnsentFissures() {
-    const { rows } = apiPool.query(
+  async selectPendingNotifications() {
+    const { rows } = await apiPool.query(
       `
         SELECT * FROM ${FissureNotificationRepository.table}
-        WHERE notification_sent = FALSE;
+        WHERE status = 'Pending';
       `,
     );
 

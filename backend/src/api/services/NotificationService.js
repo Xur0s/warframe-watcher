@@ -20,7 +20,8 @@ class NotificationService {
       return;
     }
 
-    await this.expoService.sendMissionNotification(tokens, mission);
+    return tokens;
+    // await this.expoService.sendMissionNotification(tokens, mission);
   }
 }
 

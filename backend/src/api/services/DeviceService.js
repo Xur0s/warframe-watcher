@@ -23,6 +23,16 @@ class DeviceService {
     return this.deviceRepository.findById(deviceId);
   }
 
+  async getIdByToken(token) {
+    const row = await this.deviceRepository.findByToken(token);
+
+    if (!row) {
+      return null;
+    }
+
+    return row.device_id;
+  }
+
   async remove(deviceId) {
     return this.deviceRepository.delete(deviceId);
   }
